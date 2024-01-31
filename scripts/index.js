@@ -12,6 +12,7 @@ const createNewCard = function (card, deleteCardFunc) {
   const deleteButton = newCard.querySelector(".card__delete-button");
 
   newCard.querySelector(".card__image").src = card.link;
+  newCard.querySelector(".card__image").alt = card.name;
   newCard.querySelector(".card__title").textContent = card.name;
 
   deleteButton.addEventListener("click", deleteCardFunc);
@@ -26,10 +27,10 @@ const deleteCard = (event) => {
 };
 
 // @todo: Вывести карточки на страницу
-const addCard = (cardList) => {
-  for (let i = 0; i < cardList.length; i++) {
-    placesList.append(createNewCard(cardList[i], deleteCard));
-  }
+const addCards = (cardsList) => {
+  cardsList.forEach((card) => {
+    placesList.append(createNewCard(card, deleteCard));
+  });
 };
 
-addCard(initialCards);
+addCards(initialCards);
