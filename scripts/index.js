@@ -21,8 +21,7 @@ const createNewCard = function (card, deleteCardFunc) {
 
 // @todo: Функция удаления карточки
 const deleteCard = (event) => {
-  const buttonClicked = event.target;
-  const cardToDelete = buttonClicked.closest(".places__item");
+  const cardToDelete = event.target.closest(".places__item");
   cardToDelete.remove();
 };
 
