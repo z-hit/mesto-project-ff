@@ -7,6 +7,12 @@ const cardTemplate = document.querySelector("#card-template").content;
 // @todo: DOM узлы
 
 const placesList = document.querySelector(".places__list");
+const editButton = document.querySelector(".profile__edit-button");
+const popupEdit = document.querySelector(".popup_type_edit");
+const profileAddButton = document.querySelector(".profile__add-button");
+const popupNewCard = document.querySelector(".popup_type_new-card");
+const popupImage = document.querySelector(".popup_type_image");
+const imageButton = document.querySelector(".card__image");
 
 // @todo: Функция создания карточки
 
@@ -37,3 +43,24 @@ const addCards = (cardsList) => {
 };
 
 addCards(initialCards);
+
+// @todo: popups
+
+function openPopup(popup) {
+  popup.classList.toggle("popup_is-opened");
+  popup.addEventListener("click", handleCrossClick);
+}
+
+function closePopup(popup) {
+  popup.classList.toggle("popup_is-opened");
+}
+
+function handleCrossClick(evt) {
+  if (evt.target.classList.contains("popup__close")) {
+    closePopup(evt.target.closest(".popup_is-opened"));
+  }
+}
+
+editButton.addEventListener("click", () => openPopup(popupEdit));
+profileAddButton.addEventListener("click", () => openPopup(popupNewCard));
+imageButton.addEventListener("click", () => openPopup(popupImage));
