@@ -51,7 +51,7 @@ function openPopup(popup) {
   popup.addEventListener("click", handleCrossClick);
   popup.addEventListener("click", handleOverlayClick);
   document.addEventListener("keydown", (evt) => {
-    handleEscClick(evt, popup);
+    handleEscDown(evt, popup);
   });
 
   console.log("open popup works");
@@ -60,9 +60,10 @@ function openPopup(popup) {
 function closePopup(popup) {
   popup.classList.remove("popup_is-opened");
 
-  popup.removeEventListener("click", handleCrossClick);
-  popup.removeEventListener("click", handleOverlayClick);
-  document.removeEventListener("keydown", (evt) => handleEscClick(evt, popup));
+  document.removeEventListener("keydown", (evt) => handleEscDown(evt, popup));
+
+  nameInput.value = "";
+  jobInput.value = "";
 }
 
 function handleCrossClick(evt) {
@@ -81,7 +82,7 @@ function handleOverlayClick(evt) {
   }
 }
 
-function handleEscClick(evt, popup) {
+function handleEscDown(evt, popup) {
   if (evt.key === "Escape") {
     closePopup(popup);
   }
@@ -97,3 +98,37 @@ function handleImageClick(evt) {
 placesList.addEventListener("click", (evt) => handleImageClick(evt));
 editButton.addEventListener("click", () => openPopup(popupEdit));
 profileAddButton.addEventListener("click", () => openPopup(popupNewCard));
+
+// EDIT PROFILE FORM
+
+// Находим форму в DOM
+const formElement = document.querySelector(".popup_type_edit .popup__form"); // Воспользуйтесь методом querySelector()
+// Находим поля формы в DOM
+const nameInput = formElement.querySelector(".popup__input_type_name"); // Воспользуйтесь инструментом .querySelector()
+const jobInput = formElement.querySelector(".popup__input_type_description"); // Воспользуйтесь инструментом .querySelector()
+
+// Обработчик «отправки» формы, хотя пока
+// она никуда отправляться не будет
+function handleFormSubmit(evt) {
+  evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы.
+  // Так мы можем определить свою логику отправки.
+  // О том, как это делать, расскажем позже.
+
+  // Получите значение полей jobInput и nameInput из свойства value
+  const name = nameInput.value;
+  const job = jobInput.value;
+
+  // Выберите элементы, куда должны быть вставлены значения полей
+  const profileTitle = document.querySelector(".profile__title");
+  const profileDescription = document.querySelector(".profile__description");
+  // Вставьте новые значения с помощью textContent
+
+  profileTitle.textContent = name;
+  profileDescription.textContent = job;
+
+  closePopup(evt.target.closest(".popup_is-opened"));
+}
+
+// Прикрепляем обработчик к форме:
+// он будет следить за событием “submit” - «отправка»
+formElement.addEventListener("submit", handleFormSubmit);
