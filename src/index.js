@@ -62,10 +62,15 @@ function closePopup(popup) {
 
   document.removeEventListener("keydown", (evt) => handleEscDown(evt, popup));
 
-  nameInput.value = "";
-  jobInput.value = "";
-  newCardNameInput.value = "";
-  newCardImageUrlInput.value = "";
+  clearInputs(popup);
+}
+
+function clearInputs(popup) {
+  popup.querySelectorAll(".popup__input").forEach((element) => {
+    element.value = "";
+  });
+
+  //console.log(popup.querySelectorAll(".popup__input"));
 }
 
 function handleCrossClick(evt) {
