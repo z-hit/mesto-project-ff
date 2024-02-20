@@ -51,7 +51,10 @@ addCards(initialCards);
 function openPopup(popup) {
   popup.classList.toggle("popup_is-opened");
   popup.addEventListener("click", handleCrossClick);
-  // popup.addEventListener("click", handleOverlayClick);
+  popup.addEventListener("click", handleOverlayClick);
+  popup.addEventListener("click", handleEscClick);
+
+  console.log("open popup works");
 }
 
 function closePopup(popup) {
@@ -61,19 +64,22 @@ function closePopup(popup) {
 function handleCrossClick(evt) {
   if (evt.target.classList.contains("popup__close")) {
     closePopup(evt.target.closest(".popup_is-opened"));
-    console.log("crocc clikc works");
+
+    console.log("cross click works");
   }
 }
 
-// OVERLAY CLICK ...
-/* function handleOverlayClick(evt) {
-  const openedPopup = document.querySelector(".popup_is-opened");
-  if (!openedPopup.contains(evt.target)) {
-    closePopup(openedPopup);
-    console.log(openedPopup);
-    console.log(evt.target);
+function handleOverlayClick(evt) {
+  if (evt.target.classList.contains("popup")) {
+    closePopup(evt.target.closest(".popup_is-opened"));
+
+    console.log("overlay click works");
   }
-} */
+}
+
+function handleEscClick(evt) {
+  console.log(evt.key);
+}
 
 editButton.addEventListener("click", () => openPopup(popupEdit));
 profileAddButton.addEventListener("click", () => openPopup(popupNewCard));
