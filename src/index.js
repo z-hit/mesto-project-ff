@@ -17,14 +17,10 @@ const popupNewCard = document.querySelector(".popup_type_new-card");
 const createNewCard = function (card, deleteCardFunc) {
   const newCard = cardTemplate.cloneNode(true);
   const deleteButton = newCard.querySelector(".card__delete-button");
-  const popupImage = document.querySelector(".popup_type_image");
 
   newCard.querySelector(".card__image").src = card.link;
   newCard.querySelector(".card__image").alt = card.name;
   newCard.querySelector(".card__title").textContent = card.name;
-  newCard
-    .querySelector(".card__image")
-    .addEventListener("click", openPopup(popupImage));
 
   deleteButton.addEventListener("click", deleteCardFunc);
 
@@ -49,16 +45,23 @@ addCards(initialCards);
 // @todo: popups
 
 function openPopup(popup) {
-  popup.classList.toggle("popup_is-opened");
+  popup.classList.add("popup_is-opened");
+
   popup.addEventListener("click", handleCrossClick);
   popup.addEventListener("click", handleOverlayClick);
-  popup.addEventListener("click", handleEscClick);
+  document.addEventListener("keydown", (evt) => {
+    handleEscClick(evt, popup);
+  });
 
   console.log("open popup works");
 }
 
 function closePopup(popup) {
-  popup.classList.toggle("popup_is-opened");
+  popup.classList.remove("popup_is-opened");
+
+  popup.removeEventListener("click", handleCrossClick);
+  popup.removeEventListener("click", handleOverlayClick);
+  document.removeEventListener("keydown", handleEscClick);
 }
 
 function handleCrossClick(evt) {
@@ -77,7 +80,10 @@ function handleOverlayClick(evt) {
   }
 }
 
-function handleEscClick(evt) {
+function handleEscClick(evt, popup) {
+  if (evt.key === "Escape") {
+    closePopup(popup);
+  }
   console.log(evt.key);
 }
 
