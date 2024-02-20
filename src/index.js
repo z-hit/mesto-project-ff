@@ -43,7 +43,7 @@ const addCards = (cardsList) => {
 
 addCards(initialCards);
 
-// @todo: popups
+// @todo: open and close popups
 
 function openPopup(popup) {
   popup.classList.add("popup_is-opened");
@@ -64,6 +64,8 @@ function closePopup(popup) {
 
   nameInput.value = "";
   jobInput.value = "";
+  newCardNameInput.value = "";
+  newCardImageUrlInput.value = "";
 }
 
 function handleCrossClick(evt) {
@@ -99,29 +101,20 @@ placesList.addEventListener("click", (evt) => handleImageClick(evt));
 editButton.addEventListener("click", () => openPopup(popupEdit));
 profileAddButton.addEventListener("click", () => openPopup(popupNewCard));
 
-// EDIT PROFILE FORM
+// @todo: Edit profile info
 
-// Находим форму в DOM
-const formElement = document.querySelector(".popup_type_edit .popup__form"); // Воспользуйтесь методом querySelector()
-// Находим поля формы в DOM
-const nameInput = formElement.querySelector(".popup__input_type_name"); // Воспользуйтесь инструментом .querySelector()
-const jobInput = formElement.querySelector(".popup__input_type_description"); // Воспользуйтесь инструментом .querySelector()
+const formElement = document.querySelector(".popup_type_edit .popup__form");
+const nameInput = formElement.querySelector(".popup__input_type_name");
+const jobInput = formElement.querySelector(".popup__input_type_description");
 
-// Обработчик «отправки» формы, хотя пока
-// она никуда отправляться не будет
 function handleFormSubmit(evt) {
-  evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы.
-  // Так мы можем определить свою логику отправки.
-  // О том, как это делать, расскажем позже.
+  evt.preventDefault();
 
-  // Получите значение полей jobInput и nameInput из свойства value
   const name = nameInput.value;
   const job = jobInput.value;
 
-  // Выберите элементы, куда должны быть вставлены значения полей
   const profileTitle = document.querySelector(".profile__title");
   const profileDescription = document.querySelector(".profile__description");
-  // Вставьте новые значения с помощью textContent
 
   profileTitle.textContent = name;
   profileDescription.textContent = job;
@@ -129,6 +122,27 @@ function handleFormSubmit(evt) {
   closePopup(evt.target.closest(".popup_is-opened"));
 }
 
-// Прикрепляем обработчик к форме:
-// он будет следить за событием “submit” - «отправка»
 formElement.addEventListener("submit", handleFormSubmit);
+
+// @todo: Add new card by user
+
+const cardElement = document.querySelector(".popup_type_new-card .popup__form");
+const newCardNameInput = cardElement.querySelector(".popup__input_type_url");
+const newCardImageUrlInput = cardElement.querySelector(
+  ".popup__input_type_card-name"
+);
+
+function handleNewCardSubmit(evt) {
+  evt.preventDefault();
+
+  const newCard = {};
+  newCard.link = newCardNameInput.value;
+  newCard.name = newCardImageUrlInput.value;
+
+  placesList.prepend(createNewCard(newCard, deleteCard));
+  closePopup(evt.target.closest(".popup_is-opened"));
+
+  console.log(evt.target);
+}
+
+cardElement.addEventListener("submit", handleNewCardSubmit);
