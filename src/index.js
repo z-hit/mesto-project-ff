@@ -11,6 +11,7 @@ const editButton = document.querySelector(".profile__edit-button");
 const popupEdit = document.querySelector(".popup_type_edit");
 const profileAddButton = document.querySelector(".profile__add-button");
 const popupNewCard = document.querySelector(".popup_type_new-card");
+const popupImage = document.querySelector(".popup_type_image");
 
 // @todo: Функция создания карточки
 
@@ -61,7 +62,7 @@ function closePopup(popup) {
 
   popup.removeEventListener("click", handleCrossClick);
   popup.removeEventListener("click", handleOverlayClick);
-  document.removeEventListener("keydown", handleEscClick);
+  document.removeEventListener("keydown", (evt) => handleEscClick(evt, popup));
 }
 
 function handleCrossClick(evt) {
@@ -87,5 +88,12 @@ function handleEscClick(evt, popup) {
   console.log(evt.key);
 }
 
+function handleImageClick(evt) {
+  if (evt.target.classList.contains("card__image")) {
+    openPopup(popupImage);
+  }
+}
+
+placesList.addEventListener("click", (evt) => handleImageClick(evt));
 editButton.addEventListener("click", () => openPopup(popupEdit));
 profileAddButton.addEventListener("click", () => openPopup(popupNewCard));
