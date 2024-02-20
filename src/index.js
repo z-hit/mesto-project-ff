@@ -11,18 +11,20 @@ const editButton = document.querySelector(".profile__edit-button");
 const popupEdit = document.querySelector(".popup_type_edit");
 const profileAddButton = document.querySelector(".profile__add-button");
 const popupNewCard = document.querySelector(".popup_type_new-card");
-const popupImage = document.querySelector(".popup_type_image");
-const imageButton = document.querySelector(".card__image");
 
 // @todo: Функция создания карточки
 
 const createNewCard = function (card, deleteCardFunc) {
   const newCard = cardTemplate.cloneNode(true);
   const deleteButton = newCard.querySelector(".card__delete-button");
+  const popupImage = document.querySelector(".popup_type_image");
 
   newCard.querySelector(".card__image").src = card.link;
   newCard.querySelector(".card__image").alt = card.name;
   newCard.querySelector(".card__title").textContent = card.name;
+  newCard
+    .querySelector(".card__image")
+    .addEventListener("click", openPopup(popupImage));
 
   deleteButton.addEventListener("click", deleteCardFunc);
 
@@ -49,6 +51,7 @@ addCards(initialCards);
 function openPopup(popup) {
   popup.classList.toggle("popup_is-opened");
   popup.addEventListener("click", handleCrossClick);
+  // popup.addEventListener("click", handleOverlayClick);
 }
 
 function closePopup(popup) {
@@ -58,9 +61,19 @@ function closePopup(popup) {
 function handleCrossClick(evt) {
   if (evt.target.classList.contains("popup__close")) {
     closePopup(evt.target.closest(".popup_is-opened"));
+    console.log("crocc clikc works");
   }
 }
 
+// OVERLAY CLICK ...
+/* function handleOverlayClick(evt) {
+  const openedPopup = document.querySelector(".popup_is-opened");
+  if (!openedPopup.contains(evt.target)) {
+    closePopup(openedPopup);
+    console.log(openedPopup);
+    console.log(evt.target);
+  }
+} */
+
 editButton.addEventListener("click", () => openPopup(popupEdit));
 profileAddButton.addEventListener("click", () => openPopup(popupNewCard));
-imageButton.addEventListener("click", () => openPopup(popupImage));
