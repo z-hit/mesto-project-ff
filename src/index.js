@@ -11,7 +11,6 @@ const editButton = document.querySelector(".profile__edit-button");
 const popupEdit = document.querySelector(".popup_type_edit");
 const profileAddButton = document.querySelector(".profile__add-button");
 const popupNewCard = document.querySelector(".popup_type_new-card");
-const popupImage = document.querySelector(".popup_type_image");
 
 // @todo: Функция создания карточки
 
@@ -37,9 +36,6 @@ function handleImageClick(evt) {
   const imageUrl = clickedCard.querySelector(".card__image").src;
   const caption = clickedCard.querySelector(".card__title").textContent;
 
-  console.log(imageUrl);
-  console.log(caption);
-
   const clickedCardData = {};
   clickedCardData.imageUrl = imageUrl;
   clickedCardData.caption = caption;
@@ -49,11 +45,11 @@ function handleImageClick(evt) {
 
 function createImagePopup(clickedCardData) {
   const imagePopup = document.querySelector(".popup_type_image");
-  const imagePopupImageUrl = imagePopup.querySelector(".popup__image");
+  const imagePopupImage = imagePopup.querySelector(".popup__image");
   const imagePopupCaption = imagePopup.querySelector(".popup__caption");
 
-  imagePopupImageUrl.src = clickedCardData.imageUrl;
-  imagePopupImageUrl.alt = clickedCardData.caption;
+  imagePopupImage.src = clickedCardData.imageUrl;
+  imagePopupImage.alt = clickedCardData.caption;
   imagePopupCaption.textContent = clickedCardData.caption;
 
   return imagePopup;
@@ -124,7 +120,6 @@ function handleEscDown(evt, popup) {
   }
 }
 
-placesList.addEventListener("click", (evt) => handleImageClick(evt));
 editButton.addEventListener("click", () => openPopup(popupEdit));
 profileAddButton.addEventListener("click", () => openPopup(popupNewCard));
 
