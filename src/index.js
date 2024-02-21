@@ -18,15 +18,23 @@ const popupImage = document.querySelector(".popup_type_image");
 const createNewCard = function (card, deleteCardFunc) {
   const newCard = cardTemplate.cloneNode(true);
   const deleteButton = newCard.querySelector(".card__delete-button");
+  const likeButton = newCard.querySelector(".card__like-button");
 
   newCard.querySelector(".card__image").src = card.link;
   newCard.querySelector(".card__image").alt = card.name;
   newCard.querySelector(".card__title").textContent = card.name;
 
   deleteButton.addEventListener("click", deleteCardFunc);
+  likeButton.addEventListener("click", handleLikeButtonClick);
 
   return newCard;
 };
+
+//@todo: Like functionality
+
+function handleLikeButtonClick(evt) {
+  evt.target.classList.toggle("card__like-button_is-active");
+}
 
 // @todo: Функция удаления карточки
 const deleteCard = (event) => {
@@ -48,13 +56,11 @@ addCards(initialCards);
 function openPopup(popup) {
   popup.classList.add("popup_is-opened");
 
-  popup.addEventListener("click", handleCrossClick);
-  popup.addEventListener("click", handleOverlayClick);
+  popup.addEventListener("click", (evt) => handleCrossClick(evt, popup));
+  popup.addEventListener("click", (evt) => handleOverlayClick(evt, popup));
   document.addEventListener("keydown", (evt) => {
     handleEscDown(evt, popup);
   });
-
-  console.log("open popup works");
 }
 
 function closePopup(popup) {
@@ -62,30 +68,24 @@ function closePopup(popup) {
 
   document.removeEventListener("keydown", (evt) => handleEscDown(evt, popup));
 
-  clearInputs(popup);
+  clearPopupInputs(popup);
 }
 
-function clearInputs(popup) {
-  popup.querySelectorAll(".popup__input").forEach((element) => {
-    element.value = "";
+function clearPopupInputs(popup) {
+  popup.querySelectorAll(".popup__input").forEach((input) => {
+    input.value = "";
   });
-
-  //console.log(popup.querySelectorAll(".popup__input"));
 }
 
-function handleCrossClick(evt) {
+function handleCrossClick(evt, popup) {
   if (evt.target.classList.contains("popup__close")) {
-    closePopup(evt.target.closest(".popup_is-opened"));
-
-    console.log("cross click works");
+    closePopup(popup);
   }
 }
 
-function handleOverlayClick(evt) {
+function handleOverlayClick(evt, popup) {
   if (evt.target.classList.contains("popup")) {
-    closePopup(evt.target.closest(".popup_is-opened"));
-
-    console.log("overlay click works");
+    closePopup(popup);
   }
 }
 
@@ -93,7 +93,6 @@ function handleEscDown(evt, popup) {
   if (evt.key === "Escape") {
     closePopup(popup);
   }
-  console.log(evt.key);
 }
 
 function handleImageClick(evt) {
@@ -115,6 +114,8 @@ const jobInput = formElement.querySelector(".popup__input_type_description");
 function handleFormSubmit(evt) {
   evt.preventDefault();
 
+  const openedPopup = evt.target.closest(".popup_is-opened");
+
   const name = nameInput.value;
   const job = jobInput.value;
 
@@ -124,7 +125,7 @@ function handleFormSubmit(evt) {
   profileTitle.textContent = name;
   profileDescription.textContent = job;
 
-  closePopup(evt.target.closest(".popup_is-opened"));
+  closePopup(openedPopup);
 }
 
 formElement.addEventListener("submit", handleFormSubmit);
@@ -140,14 +141,13 @@ const newCardImageUrlInput = cardElement.querySelector(
 function handleNewCardSubmit(evt) {
   evt.preventDefault();
 
+  const openedPopup = evt.target.closest(".popup_is-opened");
   const newCard = {};
   newCard.link = newCardNameInput.value;
   newCard.name = newCardImageUrlInput.value;
 
   placesList.prepend(createNewCard(newCard, deleteCard));
-  closePopup(evt.target.closest(".popup_is-opened"));
-
-  console.log(evt.target);
+  closePopup(openedPopup);
 }
 
 cardElement.addEventListener("submit", handleNewCardSubmit);
