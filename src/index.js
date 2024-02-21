@@ -19,6 +19,7 @@ const createNewCard = function (card, deleteCardFunc) {
   const newCard = cardTemplate.cloneNode(true);
   const deleteButton = newCard.querySelector(".card__delete-button");
   const likeButton = newCard.querySelector(".card__like-button");
+  const imageButton = newCard.querySelector(".card__image");
 
   newCard.querySelector(".card__image").src = card.link;
   newCard.querySelector(".card__image").alt = card.name;
@@ -26,9 +27,37 @@ const createNewCard = function (card, deleteCardFunc) {
 
   deleteButton.addEventListener("click", deleteCardFunc);
   likeButton.addEventListener("click", handleLikeButtonClick);
+  imageButton.addEventListener("click", handleImageClick);
 
   return newCard;
 };
+
+function handleImageClick(evt) {
+  const clickedCard = evt.target.closest(".card");
+  const imageUrl = clickedCard.querySelector(".card__image").src;
+  const caption = clickedCard.querySelector(".card__title").textContent;
+
+  console.log(imageUrl);
+  console.log(caption);
+
+  const clickedCardData = {};
+  clickedCardData.imageUrl = imageUrl;
+  clickedCardData.caption = caption;
+
+  openPopup(createImagePopup(clickedCardData));
+}
+
+function createImagePopup(clickedCardData) {
+  const imagePopup = document.querySelector(".popup_type_image");
+  const imagePopupImageUrl = imagePopup.querySelector(".popup__image");
+  const imagePopupCaption = imagePopup.querySelector(".popup__caption");
+
+  imagePopupImageUrl.src = clickedCardData.imageUrl;
+  imagePopupImageUrl.alt = clickedCardData.caption;
+  imagePopupCaption.textContent = clickedCardData.caption;
+
+  return imagePopup;
+}
 
 //@todo: Like functionality
 
@@ -92,12 +121,6 @@ function handleOverlayClick(evt, popup) {
 function handleEscDown(evt, popup) {
   if (evt.key === "Escape") {
     closePopup(popup);
-  }
-}
-
-function handleImageClick(evt) {
-  if (evt.target.classList.contains("card__image")) {
-    openPopup(popupImage);
   }
 }
 
