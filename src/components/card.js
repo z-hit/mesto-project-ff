@@ -1,3 +1,5 @@
+import { cardTemplate, handleImageClick } from "../index";
+
 const createNewCard = function (card, deleteCardFunc) {
   const newCard = cardTemplate.cloneNode(true);
   const deleteButton = newCard.querySelector(".card__delete-button");
@@ -24,4 +26,4 @@ function deleteCard(evt) {
   cardToDelete.remove();
 }
 
-
+export { createNewCard, deleteCard };
