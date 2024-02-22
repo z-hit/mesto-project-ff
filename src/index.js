@@ -1,5 +1,5 @@
 import "./index.css";
-import { initialCards } from "./components/initialCards.js";
+import { initialCards } from "./components/cards.js";
 import { createNewCard, deleteCard } from "./components/card";
 import { openModal, closeModal } from "./components/modal.js";
 
@@ -28,8 +28,8 @@ profileEditButton.addEventListener("click", () =>
 createNewCardButton.addEventListener("click", () =>
   openModal(createNewCardModal, closeModal)
 );
-profileEditForm.addEventListener("submit", handleProfileEditFormSubmit);
-newCardForm.addEventListener("submit", handleNewCardSubmit);
+profileEditForm.addEventListener("submit", updateProfileInfo);
+newCardForm.addEventListener("submit", addNewCardByUser);
 
 function handleImageClick(evt) {
   const clickedCard = evt.target.closest(".card");
@@ -46,7 +46,7 @@ function handleImageClick(evt) {
   openModal(imageModal, closeModal);
 }
 
-function handleProfileEditFormSubmit(evt) {
+function updateProfileInfo(evt) {
   evt.preventDefault();
 
   const profileEditNameInput = profileEditForm.querySelector(
@@ -62,21 +62,26 @@ function handleProfileEditFormSubmit(evt) {
   closeModal(evt);
 }
 
-function handleNewCardSubmit(evt) {
-  evt.preventDefault();
-
+function createNewCardByUser(evt) {
   const newCardImageInput = newCardForm.querySelector(".popup__input_type_url");
   const newCardNameInput = newCardForm.querySelector(
     ".popup__input_type_card-name"
   );
 
-  const newCard = {};
-  newCard.link = newCardImageInput.value;
-  newCard.name = newCardNameInput.value;
+  const newCardData = {};
+  newCardData.link = newCardImageInput.value;
+  newCardData.name = newCardNameInput.value;
 
-  placesList.prepend(createNewCard(newCard, deleteCard));
-
+  const newCard = createNewCard(newCardData, deleteCard);
   closeModal(evt);
+
+  return newCard;
+}
+
+function addNewCardByUser(evt) {
+  evt.preventDefault();
+
+  placesList.prepend(createNewCardByUser(evt));
 }
 
 export { cardTemplate, handleImageClick };
