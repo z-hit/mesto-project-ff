@@ -3,6 +3,9 @@
   line-height: 22px;
   grid-area: description;
   margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  contain: inline-size;
 }
 
 @media screen and (max-width: 568px) {
