@@ -1,23 +1,26 @@
-import { cardTemplate, handleImageClick } from "../index";
+import { cardTemplate } from "../index";
 
-const createNewCard = function (card, deleteCardFunc) {
+const createNewCard = function (card, deleteCardFunc, handleImageClickFunc) {
   const newCard = cardTemplate.cloneNode(true);
-  const deleteButton = newCard.querySelector(".card__delete-button");
-  const likeButton = newCard.querySelector(".card__like-button");
-  const imageButton = newCard.querySelector(".card__image");
+  const buttonDeleteCard = newCard.querySelector(".card__delete-button");
+  const buttonLike = newCard.querySelector(".card__like-button");
+  const buttonImage = newCard.querySelector(".card__image");
+  const cardTitle = newCard.querySelector(".card__title");
 
-  newCard.querySelector(".card__image").src = card.link;
-  newCard.querySelector(".card__image").alt = card.name;
-  newCard.querySelector(".card__title").textContent = card.name;
+  buttonImage.src = card.link;
+  buttonImage.alt = card.name;
+  cardTitle.textContent = card.name;
 
-  deleteButton.addEventListener("click", deleteCardFunc);
-  likeButton.addEventListener("click", handleLikeButtonClick);
-  imageButton.addEventListener("click", handleImageClick);
+  buttonDeleteCard.addEventListener("click", deleteCardFunc);
+  buttonLike.addEventListener("click", handleLikeClick);
+  buttonImage.addEventListener("click", () =>
+    handleImageClickFunc(card.link, card.name)
+  );
 
   return newCard;
 };
 
-function handleLikeButtonClick(evt) {
+function handleLikeClick(evt) {
   evt.target.classList.toggle("card__like-button_is-active");
 }
 
