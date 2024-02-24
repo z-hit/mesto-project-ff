@@ -1,7 +1,11 @@
 import "./index.css";
 import { initialCards } from "./components/cards.js";
 import { createNewCard, deleteCard } from "./components/card";
-import { openModal, closeModal } from "./components/modal.js";
+import {
+  openModal,
+  closeModal,
+  handleOverlayClick,
+} from "./components/modal.js";
 
 const cardTemplate = document.querySelector("#card-template").content;
 
@@ -9,6 +13,7 @@ const placesList = document.querySelector(".places__list");
 const buttonOpenPopupEdit = document.querySelector(".profile__edit-button");
 const popupEdit = document.querySelector(".popup_type_edit");
 const formEditProfile = document.querySelector(".popup_type_edit .popup__form");
+const buttonClosePopupEdit = popupEdit.querySelector(".popup__close");
 const inputProfileEditName = formEditProfile.querySelector(
   ".popup__input_type_name"
 );
@@ -19,12 +24,14 @@ const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
 const buttonOpenPopupNewCard = document.querySelector(".profile__add-button");
 const popupNewCard = document.querySelector(".popup_type_new-card");
+const buttonClosePopupNewCard = popupNewCard.querySelector(".popup__close");
 const formNewCard = document.querySelector(".popup_type_new-card .popup__form");
 const inputNewCardImage = formNewCard.querySelector(".popup__input_type_url");
 const inputNewCardName = formNewCard.querySelector(
   ".popup__input_type_card-name"
 );
 const popupImage = document.querySelector(".popup_type_image");
+const buttonClosePopupImage = popupImage.querySelector(".popup__close");
 const popupImageImage = popupImage.querySelector(".popup__image");
 const popupImageCaption = popupImage.querySelector(".popup__caption");
 
@@ -40,17 +47,35 @@ buttonOpenPopupEdit.addEventListener("click", () => {
   inputProfileEditDescription.value = profileDescription.textContent;
   openModal(popupEdit);
 });
+formEditProfile.addEventListener("submit", updateProfileInfo);
+buttonClosePopupEdit.addEventListener("click", () =>
+  handleCrossClick(popupEdit)
+);
+popupEdit.addEventListener("click", handleOverlayClick);
+
 buttonOpenPopupNewCard.addEventListener("click", () => {
   clearInputs(popupNewCard);
   openModal(popupNewCard);
 });
-formEditProfile.addEventListener("submit", updateProfileInfo);
 formNewCard.addEventListener("submit", addNewCardByUser);
+buttonClosePopupNewCard.addEventListener("click", () =>
+  handleCrossClick(popupNewCard)
+);
+popupNewCard.addEventListener("click", handleOverlayClick);
 
-function clearInputs(e) {
-  e.querySelectorAll(".popup__input").forEach((input) => {
+buttonClosePopupImage.addEventListener("click", () =>
+  handleCrossClick(popupImage)
+);
+popupImage.addEventListener("click", handleOverlayClick);
+
+function clearInputs(popup) {
+  popup.querySelectorAll(".popup__input").forEach((input) => {
     input.value = "";
   });
+}
+
+function handleCrossClick(popup) {
+  closeModal(popup);
 }
 
 function handleImageClick(cardImage, cardCaption) {
