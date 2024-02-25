@@ -12,8 +12,8 @@ const cardTemplate = document.querySelector("#card-template").content;
 const placesList = document.querySelector(".places__list");
 const buttonOpenPopupEdit = document.querySelector(".profile__edit-button");
 const popupEdit = document.querySelector(".popup_type_edit");
-const formEditProfile = document.querySelector(".popup_type_edit .popup__form");
 const buttonClosePopupEdit = popupEdit.querySelector(".popup__close");
+const formEditProfile = document.querySelector(".popup_type_edit .popup__form");
 const inputProfileEditName = formEditProfile.querySelector(
   ".popup__input_type_name"
 );
@@ -47,26 +47,25 @@ buttonOpenPopupEdit.addEventListener("click", () => {
   inputProfileEditDescription.value = profileDescription.textContent;
   openModal(popupEdit);
 });
-formEditProfile.addEventListener("submit", updateProfileInfo);
 buttonClosePopupEdit.addEventListener("click", () =>
   handleCrossClick(popupEdit)
 );
 popupEdit.addEventListener("click", handleOverlayClick);
+formEditProfile.addEventListener("submit", updateProfileInfo);
 
 buttonOpenPopupNewCard.addEventListener("click", () => {
   clearInputs(popupNewCard);
   openModal(popupNewCard);
 });
-formNewCard.addEventListener("submit", addNewCardByUser);
 buttonClosePopupNewCard.addEventListener("click", () =>
   handleCrossClick(popupNewCard)
 );
 popupNewCard.addEventListener("click", handleOverlayClick);
-
+formNewCard.addEventListener("submit", addNewCardByUser);
+popupImage.addEventListener("click", handleOverlayClick);
 buttonClosePopupImage.addEventListener("click", () =>
   handleCrossClick(popupImage)
 );
-popupImage.addEventListener("click", handleOverlayClick);
 
 function clearInputs(popup) {
   popup.querySelectorAll(".popup__input").forEach((input) => {
