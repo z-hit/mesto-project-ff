@@ -1,3 +1,3 @@
 # Проектная работа Mesto
 
-https://github.com/z-hit/mesto-project-ff#readme
+https://z-hit.github.io/mesto-project-ff/
