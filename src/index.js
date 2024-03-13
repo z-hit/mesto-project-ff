@@ -6,6 +6,7 @@ import {
   closeModal,
   handleOverlayClick,
 } from "./components/modal.js";
+import { enableValidation, hideInputError } from "./components/validation.js";
 
 const cardTemplate = document.querySelector("#card-template").content;
 
@@ -34,6 +35,14 @@ const popupImage = document.querySelector(".popup_type_image");
 const buttonClosePopupImage = popupImage.querySelector(".popup__close");
 const popupImageImage = popupImage.querySelector(".popup__image");
 const popupImageCaption = popupImage.querySelector(".popup__caption");
+const validationConfig = {
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__error_visible",
+};
 
 function addCards(cardsList) {
   cardsList.forEach((card) => {
@@ -45,7 +54,7 @@ addCards(initialCards);
 buttonOpenPopupEdit.addEventListener("click", () => {
   inputProfileEditName.value = profileTitle.textContent;
   inputProfileEditDescription.value = profileDescription.textContent;
-  clearValidation(popupEdit);
+  clearValidation(popupEdit, validationConfig);
   openModal(popupEdit);
 });
 buttonClosePopupEdit.addEventListener("click", () =>
@@ -56,7 +65,7 @@ formEditProfile.addEventListener("submit", updateProfileInfo);
 
 buttonOpenPopupNewCard.addEventListener("click", () => {
   clearInputs(popupNewCard);
-  clearValidation(popupNewCard);
+  clearValidation(popupNewCard, validationConfig);
   openModal(popupNewCard);
 });
 buttonClosePopupNewCard.addEventListener("click", () =>
@@ -108,92 +117,23 @@ function addNewCardByUser(evt) {
 }
 
 // VALIDATION
-// VALIDATION
-// VALIDATION
 
-function hasInvalidInput(inputList) {
-  return inputList.some((inputElement) => {
-    return !inputElement.validity.valid;
-  });
-}
-
-function toggleButtonState(inputList, buttonElement) {
-  if (hasInvalidInput(inputList)) {
-    buttonElement.disabled = true;
-    buttonElement.classList.add("popup__button_disabled");
-  } else {
-    buttonElement.disabled = false;
-    buttonElement.classList.remove("popup__button_disabled");
-  }
-}
-
-function showInputError(formElement, inputElement, errorMessage) {
-  const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
-  inputElement.classList.add("popup__input_type_error");
-  errorElement.textContent = errorMessage;
-  errorElement.classList.add("popup__error_visible");
-}
-
-function hideInputError(formElement, inputElement) {
-  const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
-  inputElement.classList.remove("popup__input_type_error");
-  errorElement.classList.remove("popup__error_visible");
-  errorElement.textContent = "";
-}
-
-const isValid = (formElement, inputElement) => {
-  if (inputElement.validity.patternMismatch) {
-    inputElement.setCustomValidity(inputElement.dataset.errorMessage);
-  } else {
-    inputElement.setCustomValidity("");
-  }
-
-  if (!inputElement.validity.valid) {
-    showInputError(formElement, inputElement, inputElement.validationMessage);
-  } else {
-    hideInputError(formElement, inputElement);
-  }
-};
-
-function setEventListeners(formElement) {
-  const inputList = Array.from(formElement.querySelectorAll(".popup__input"));
-  const buttonElement = formElement.querySelector(".popup__button");
-
-  inputList.forEach((inputElement) => {
-    inputElement.addEventListener("input", () => {
-      isValid(formElement, inputElement);
-      toggleButtonState(inputList, buttonElement);
-    });
-  });
-}
-
-function enableValidation(validationConfig) {
-  const formList = Array.from(document.querySelectorAll(".popup__form"));
-
-  formList.forEach((formElement) => {
-    setEventListeners(formElement);
-  });
-}
-
-function clearValidation(formElement) {
-  const inputList = Array.from(formElement.querySelectorAll(".popup__input"));
-  const buttonElement = formElement.querySelector(".popup__button");
+function clearValidation(formElement, validationConfig) {
+  const inputList = Array.from(
+    formElement.querySelectorAll(validationConfig.inputSelector)
+  );
+  const buttonElement = formElement.querySelector(
+    validationConfig.submitButtonSelector
+  );
 
   buttonElement.disabled = true;
-  buttonElement.classList.add("popup__button_disabled");
+  buttonElement.classList.add(validationConfig.inactiveButtonClass);
 
   inputList.forEach((input) => {
-    hideInputError(formElement, input);
+    hideInputError(formElement, input, validationConfig);
   });
 }
 
-enableValidation({
-  formSelector: ".popup__form",
-  inputSelector: ".popup__input",
-  submitButtonSelector: ".popup__button",
-  inactiveButtonClass: "popup__button_disabled",
-  inputErrorClass: "popup__input_type_error",
-  errorClass: "popup__error_visible",
-});
+enableValidation(validationConfig);
 
 export { cardTemplate, handleImageClick };
