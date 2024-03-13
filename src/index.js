@@ -1,5 +1,5 @@
 import "./index.css";
-//import { initialCards } from "./components/cards.js";
+import { initialCards } from "./components/cards.js";
 import { createNewCard, deleteCard } from "./components/card";
 import {
   openModal,
@@ -50,36 +50,53 @@ const token = "3a178645-c470-4f48-a274-38f177eede82";
 //SERVER
 
 function getUserData() {
-  return fetch(serverUrl + "users/me", {
-    method: "GET",
-    headers: {
-      authorization: token,
-    },
-  })
-    .then((res) => res.json())
-    .then((result) => {
-      profileTitle.textContent = result.name;
-      profileDescription.textContent = result.about;
-      profileAvatar.style.backgroundImage = "url('" + result.avatar + "')";
-    });
+  return new Promise((res, rej) => {
+    res(
+      fetch(serverUrl + "users/me", {
+        method: "GET",
+        headers: {
+          authorization: token,
+        },
+      })
+    );
+    rej();
+  });
 }
 
-getUserData();
+getUserData()
+  .then((res) => res.json())
+  .then((result) => createProfile(result))
+  .catch((err) => console.log(err));
+
+function createProfile(data) {
+  profileTitle.textContent = data.name;
+  profileDescription.textContent = data.about;
+  profileAvatar.style.backgroundImage = "url('" + data.avatar + "')";
+}
 
 function getInitialCards() {
-  return fetch(serverUrl + "cards", {
-    method: "GET",
-    headers: {
-      authorization: token,
-    },
-  })
-    .then((res) => res.json())
-    .then((result) => {
-      return addCards(result);
-    });
+  return new Promise((res, rej) => {
+    res(
+      fetch(serverUrl + "cards", {
+        method: "GET",
+        headers: {
+          authorization: token,
+        },
+      })
+    );
+    rej();
+  });
 }
 
-getInitialCards();
+getInitialCards()
+  .then((res) => res.json())
+  .then((cardsList) => addCards(cardsList))
+  .catch((backupCardsList) => addCards(backupCardsList));
+
+/* const promises = [getUserData(), getInitialCards()];
+
+Promise.all(promises).then((res) => console.log(res));
+//.then((result) => console.log(result)); */
 
 function addCards(cardsList) {
   cardsList.forEach((card) => {
