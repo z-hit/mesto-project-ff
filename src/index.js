@@ -49,13 +49,14 @@ const validationConfig = {
 
 function getInitialCards() {
   return fetch("https://nomoreparties.co/v1/wff-cohort-8/cards", {
+    method: "GET",
     headers: {
       authorization: "3a178645-c470-4f48-a274-38f177eede82",
     },
   })
     .then((res) => res.json())
     .then((result) => {
-      console.log(typeof result);
+      return Promise.all(result);
     });
 }
 
@@ -71,7 +72,6 @@ function getUserData() {
       profileTitle.textContent = result.name;
       profileDescription.textContent = result.about;
       profileAvatar.style.backgroundImage = "url('" + result.avatar + "')";
-      console.log(result);
     });
 }
 
@@ -79,11 +79,12 @@ getInitialCards();
 getUserData();
 
 function addCards(cardsList) {
+  console.log(cardsList);
   cardsList.forEach((card) => {
     placesList.append(createNewCard(card, deleteCard, handleImageClick));
   });
 }
-addCards(initialCards);
+addCards(getInitialCards());
 
 buttonOpenPopupEdit.addEventListener("click", () => {
   inputProfileEditName.value = profileTitle.textContent;
