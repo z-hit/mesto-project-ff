@@ -7,9 +7,9 @@ import {
   handleOverlayClick,
 } from "./components/modal.js";
 import { enableValidation, hideInputError } from "./components/validation.js";
+import { _ } from "core-js";
 
 const cardTemplate = document.querySelector("#card-template").content;
-
 const placesList = document.querySelector(".places__list");
 const buttonOpenPopupEdit = document.querySelector(".profile__edit-button");
 const popupEdit = document.querySelector(".popup_type_edit");
@@ -23,6 +23,7 @@ const inputProfileEditDescription = formEditProfile.querySelector(
 );
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
+const profileAvatar = document.querySelector(".profile__image");
 const buttonOpenPopupNewCard = document.querySelector(".profile__add-button");
 const popupNewCard = document.querySelector(".popup_type_new-card");
 const buttonClosePopupNewCard = popupNewCard.querySelector(".popup__close");
@@ -43,6 +44,39 @@ const validationConfig = {
   inputErrorClass: "popup__input_type_error",
   errorClass: "popup__error_visible",
 };
+
+//SERVER
+
+function getInitialCards() {
+  return fetch("https://nomoreparties.co/v1/wff-cohort-8/cards", {
+    headers: {
+      authorization: "3a178645-c470-4f48-a274-38f177eede82",
+    },
+  })
+    .then((res) => res.json())
+    .then((result) => {
+      console.log(typeof result);
+    });
+}
+
+function getUserData() {
+  return fetch("https://nomoreparties.co/v1/wff-cohort-8/users/me", {
+    method: "GET",
+    headers: {
+      authorization: "3a178645-c470-4f48-a274-38f177eede82",
+    },
+  })
+    .then((res) => res.json())
+    .then((result) => {
+      profileTitle.textContent = result.name;
+      profileDescription.textContent = result.about;
+      profileAvatar.style.backgroundImage = "url('" + result.avatar + "')";
+      console.log(result);
+    });
+}
+
+getInitialCards();
+getUserData();
 
 function addCards(cardsList) {
   cardsList.forEach((card) => {
@@ -115,8 +149,6 @@ function addNewCardByUser(evt) {
   placesList.prepend(createNewCard(newCardData, deleteCard, handleImageClick));
   closeModal(popupNewCard);
 }
-
-// VALIDATION
 
 function clearValidation(formElement, validationConfig) {
   const inputList = Array.from(
