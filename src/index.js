@@ -1,5 +1,5 @@
 import "./index.css";
-import { initialCards } from "./components/cards.js";
+//import { initialCards } from "./components/cards.js";
 import { createNewCard, deleteCard } from "./components/card";
 import {
   openModal,
@@ -44,27 +44,16 @@ const validationConfig = {
   inputErrorClass: "popup__input_type_error",
   errorClass: "popup__error_visible",
 };
+const serverUrl = "https://nomoreparties.co/v1/wff-cohort-8/";
+const token = "3a178645-c470-4f48-a274-38f177eede82";
 
 //SERVER
 
-function getInitialCards() {
-  return fetch("https://nomoreparties.co/v1/wff-cohort-8/cards", {
-    method: "GET",
-    headers: {
-      authorization: "3a178645-c470-4f48-a274-38f177eede82",
-    },
-  })
-    .then((res) => res.json())
-    .then((result) => {
-      return Promise.all(result);
-    });
-}
-
 function getUserData() {
-  return fetch("https://nomoreparties.co/v1/wff-cohort-8/users/me", {
+  return fetch(serverUrl + "users/me", {
     method: "GET",
     headers: {
-      authorization: "3a178645-c470-4f48-a274-38f177eede82",
+      authorization: token,
     },
   })
     .then((res) => res.json())
@@ -75,16 +64,28 @@ function getUserData() {
     });
 }
 
-getInitialCards();
 getUserData();
 
+function getInitialCards() {
+  return fetch(serverUrl + "cards", {
+    method: "GET",
+    headers: {
+      authorization: token,
+    },
+  })
+    .then((res) => res.json())
+    .then((result) => {
+      return addCards(result);
+    });
+}
+
+getInitialCards();
+
 function addCards(cardsList) {
-  console.log(cardsList);
   cardsList.forEach((card) => {
     placesList.append(createNewCard(card, deleteCard, handleImageClick));
   });
 }
-addCards(getInitialCards());
 
 buttonOpenPopupEdit.addEventListener("click", () => {
   inputProfileEditName.value = profileTitle.textContent;
