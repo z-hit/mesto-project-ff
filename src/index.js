@@ -1,5 +1,5 @@
 import "./index.css";
-import { initialCards } from "./components/cards.js";
+//import { initialCards } from "./components/cards.js";
 import { createNewCard, deleteCard } from "./components/card";
 import {
   openModal,
@@ -47,26 +47,30 @@ const validationConfig = {
 const serverUrl = "https://nomoreparties.co/v1/wff-cohort-8/";
 const token = "3a178645-c470-4f48-a274-38f177eede82";
 
-//SERVER
-
-function getUserData() {
-  return new Promise((res, rej) => {
-    res(
-      fetch(serverUrl + "users/me", {
-        method: "GET",
-        headers: {
-          authorization: token,
-        },
-      })
-    );
-    rej();
-  });
+function getRequestedData(response) {
+  if (response.ok) {
+    return response.json();
+  }
+  return response.status;
 }
 
-getUserData()
-  .then((res) => res.json())
-  .then((result) => createProfile(result))
-  .catch((err) => console.log(err));
+function getUserData() {
+  return fetch(serverUrl + "users/me", {
+    method: "GET",
+    headers: {
+      authorization: token,
+    },
+  }).then((res) => getRequestedData(res));
+}
+
+function getCardsData() {
+  return fetch(serverUrl + "cards", {
+    method: "GET",
+    headers: {
+      authorization: token,
+    },
+  }).then((res) => getRequestedData(res));
+}
 
 function createProfile(data) {
   profileTitle.textContent = data.name;
@@ -74,35 +78,105 @@ function createProfile(data) {
   profileAvatar.style.backgroundImage = "url('" + data.avatar + "')";
 }
 
-function getInitialCards() {
-  return new Promise((res, rej) => {
-    res(
-      fetch(serverUrl + "cards", {
-        method: "GET",
-        headers: {
-          authorization: token,
-        },
-      })
-    );
-    rej();
-  });
-}
-
-getInitialCards()
-  .then((res) => res.json())
-  .then((cardsList) => addCards(cardsList))
-  .catch((backupCardsList) => addCards(backupCardsList));
-
-/* const promises = [getUserData(), getInitialCards()];
-
-Promise.all(promises).then((res) => console.log(res));
-//.then((result) => console.log(result)); */
-
 function addCards(cardsList) {
   cardsList.forEach((card) => {
     placesList.append(createNewCard(card, deleteCard, handleImageClick));
   });
 }
+
+Promise.all([getUserData(), getCardsData()])
+  .then(([userData, cardsData]) => {
+    createProfile(userData);
+    addCards(cardsData);
+  })
+  .catch((err) => console.log(err));
+
+function clearInputs(popup) {
+  popup.querySelectorAll(".popup__input").forEach((input) => {
+    input.value = "";
+  });
+}
+
+function handleCrossClick(popup) {
+  closeModal(popup);
+}
+
+function handleImageClick(cardImage, cardCaption) {
+  popupImageImage.src = cardImage;
+  popupImageCaption.textContent = cardCaption;
+  popupImageImage.alt = cardCaption;
+
+  openModal(popupImage);
+}
+
+function updateProfileInfo(evt) {
+  evt.preventDefault();
+
+  profileTitle.textContent = inputProfileEditName.value;
+  profileDescription.textContent = inputProfileEditDescription.value;
+
+  closeModal(popupEdit);
+
+  return fetch(serverUrl + "users/me", {
+    method: "PATCH",
+    headers: {
+      authorization: token,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name: inputProfileEditName.value,
+      about: inputProfileEditDescription.value,
+    }),
+  })
+    .then((res) => getRequestedData(res))
+    .then((data) => console.log(data))
+    .catch((err) => console.log(err));
+}
+
+function addNewCardByUser(evt) {
+  evt.preventDefault();
+
+  const newCardData = {
+    name: inputNewCardName.value,
+    link: inputNewCardImage.value,
+  };
+
+  placesList.prepend(createNewCard(newCardData, deleteCard, handleImageClick));
+  closeModal(popupNewCard);
+
+  return fetch(serverUrl + "cards", {
+    method: "POST",
+    headers: {
+      authorization: token,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name: inputNewCardName.value,
+      link: inputNewCardImage.value,
+    }),
+  })
+    .then((res) => getRequestedData(res))
+    .then((data) => console.log(data))
+    .catch((err) => console.log(err));
+}
+
+function clearValidation(formElement, validationConfig) {
+  const inputList = Array.from(
+    formElement.querySelectorAll(validationConfig.inputSelector)
+  );
+  const buttonElement = formElement.querySelector(
+    validationConfig.submitButtonSelector
+  );
+
+  buttonElement.disabled = true;
+  buttonElement.classList.add(validationConfig.inactiveButtonClass);
+
+  inputList.forEach((input) => {
+    hideInputError(formElement, input, validationConfig);
+  });
+}
+
+enableValidation(validationConfig);
 
 buttonOpenPopupEdit.addEventListener("click", () => {
   inputProfileEditName.value = profileTitle.textContent;
@@ -130,61 +204,5 @@ popupImage.addEventListener("click", handleOverlayClick);
 buttonClosePopupImage.addEventListener("click", () =>
   handleCrossClick(popupImage)
 );
-
-function clearInputs(popup) {
-  popup.querySelectorAll(".popup__input").forEach((input) => {
-    input.value = "";
-  });
-}
-
-function handleCrossClick(popup) {
-  closeModal(popup);
-}
-
-function handleImageClick(cardImage, cardCaption) {
-  popupImageImage.src = cardImage;
-  popupImageCaption.textContent = cardCaption;
-  popupImageImage.alt = cardCaption;
-
-  openModal(popupImage);
-}
-
-function updateProfileInfo(evt) {
-  evt.preventDefault();
-
-  profileTitle.textContent = inputProfileEditName.value;
-  profileDescription.textContent = inputProfileEditDescription.value;
-
-  closeModal(popupEdit);
-}
-
-function addNewCardByUser(evt) {
-  evt.preventDefault();
-
-  const newCardData = {};
-  newCardData.link = inputNewCardImage.value;
-  newCardData.name = inputNewCardName.value;
-
-  placesList.prepend(createNewCard(newCardData, deleteCard, handleImageClick));
-  closeModal(popupNewCard);
-}
-
-function clearValidation(formElement, validationConfig) {
-  const inputList = Array.from(
-    formElement.querySelectorAll(validationConfig.inputSelector)
-  );
-  const buttonElement = formElement.querySelector(
-    validationConfig.submitButtonSelector
-  );
-
-  buttonElement.disabled = true;
-  buttonElement.classList.add(validationConfig.inactiveButtonClass);
-
-  inputList.forEach((input) => {
-    hideInputError(formElement, input, validationConfig);
-  });
-}
-
-enableValidation(validationConfig);
 
 export { cardTemplate, handleImageClick };
