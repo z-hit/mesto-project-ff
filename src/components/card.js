@@ -1,4 +1,5 @@
-import { cardTemplate } from "../index";
+import { cardTemplate, popupConfirmDeleteCard } from "../index";
+import { openModal } from "./modal";
 
 const createNewCard = function (
   card,
@@ -41,11 +42,11 @@ function handleLikeClick(evt) {
   evt.target.classList.toggle("card__like-button_is-active");
 }
 
-
-
 function deleteCard(evt) {
-  const cardToDelete = evt.target.closest(".places__item");
-  cardToDelete.remove();
+  /* const cardToDelete = evt.target.closest(".places__item");
+  cardToDelete.remove(); */
+  openModal(popupConfirmDeleteCard);
+  console.log(evt);
 }
 
 export { createNewCard, deleteCard };

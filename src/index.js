@@ -1,5 +1,4 @@
 import "./index.css";
-//import { initialCards } from "./components/cards.js";
 import { createNewCard, deleteCard } from "./components/card";
 import {
   openModal,
@@ -40,6 +39,8 @@ const popupImageCaption = popupImage.querySelector(".popup__caption");
 const popupConfirmDeleteCard = document.querySelector(
   ".popup_type_confirm-delete-card"
 );
+const buttonClosePopupConfirmDeleteCard =
+  popupConfirmDeleteCard.querySelector(".popup__close");
 
 const validationConfig = {
   formSelector: ".popup__form",
@@ -108,10 +109,6 @@ Promise.all([getUserData(), getCardsData()])
     addCards(cardsData);
   })
   .catch((err) => console.log(err));
-
-/* function confirmDeleteCard() {
-  openModal(popupConfirmDeleteCard);
-} */
 
 function clearInputs(popup) {
   popup.querySelectorAll(".popup__input").forEach((input) => {
@@ -227,5 +224,10 @@ popupImage.addEventListener("click", handleOverlayClick);
 buttonClosePopupImage.addEventListener("click", () =>
   handleCrossClick(popupImage)
 );
+popupConfirmDeleteCard.addEventListener("submit", (evt) => console.log(evt));
+popupConfirmDeleteCard.addEventListener("click", handleOverlayClick);
+buttonClosePopupConfirmDeleteCard.addEventListener("click", () =>
+  handleCrossClick(popupConfirmDeleteCard)
+);
 
-export { cardTemplate, handleImageClick };
+export { cardTemplate, popupConfirmDeleteCard, handleImageClick };
