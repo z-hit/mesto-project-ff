@@ -41,6 +41,8 @@ function handleLikeClick(evt) {
   evt.target.classList.toggle("card__like-button_is-active");
 }
 
+
+
 function deleteCard(evt) {
   const cardToDelete = evt.target.closest(".places__item");
   cardToDelete.remove();

@@ -37,6 +37,10 @@ const popupImage = document.querySelector(".popup_type_image");
 const buttonClosePopupImage = popupImage.querySelector(".popup__close");
 const popupImageImage = popupImage.querySelector(".popup__image");
 const popupImageCaption = popupImage.querySelector(".popup__caption");
+const popupConfirmDeleteCard = document.querySelector(
+  ".popup_type_confirm-delete-card"
+);
+
 const validationConfig = {
   formSelector: ".popup__form",
   inputSelector: ".popup__input",
@@ -100,12 +104,14 @@ function addCards(cardsList) {
 
 Promise.all([getUserData(), getCardsData()])
   .then(([userData, cardsData]) => {
-    console.log(userData);
-    console.log(cardsData);
     createProfile(userData);
     addCards(cardsData);
   })
   .catch((err) => console.log(err));
+
+/* function confirmDeleteCard() {
+  openModal(popupConfirmDeleteCard);
+} */
 
 function clearInputs(popup) {
   popup.querySelectorAll(".popup__input").forEach((input) => {
