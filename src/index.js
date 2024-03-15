@@ -10,6 +10,7 @@ import { enableValidation, hideInputError } from "./components/validation.js";
 import { _ } from "core-js";
 
 const cardTemplate = document.querySelector("#card-template").content;
+
 const placesList = document.querySelector(".places__list");
 const buttonOpenPopupEdit = document.querySelector(".profile__edit-button");
 const popupEdit = document.querySelector(".popup_type_edit");
@@ -46,6 +47,12 @@ const validationConfig = {
 };
 const serverUrl = "https://nomoreparties.co/v1/wff-cohort-8/";
 const token = "3a178645-c470-4f48-a274-38f177eede82";
+const userProfileData = {
+  name: "",
+  about: "",
+  avatar: "",
+  id: "",
+};
 
 function getRequestedData(response) {
   if (response.ok) {
@@ -72,20 +79,29 @@ function getCardsData() {
   }).then((res) => getRequestedData(res));
 }
 
-function createProfile(data) {
-  profileTitle.textContent = data.name;
-  profileDescription.textContent = data.about;
-  profileAvatar.style.backgroundImage = "url('" + data.avatar + "')";
+function createProfile(userData) {
+  userProfileData.name = userData.name;
+  userProfileData.about = userData.about;
+  userProfileData.avatar = "url('" + userData.avatar + "')";
+  userProfileData.id = userData._id;
+
+  profileTitle.textContent = userProfileData.name;
+  profileDescription.textContent = userProfileData.about;
+  profileAvatar.style.backgroundImage = userProfileData.avatar;
 }
 
 function addCards(cardsList) {
   cardsList.forEach((card) => {
-    placesList.append(createNewCard(card, deleteCard, handleImageClick));
+    placesList.append(
+      createNewCard(card, userProfileData, deleteCard, handleImageClick)
+    );
   });
 }
 
 Promise.all([getUserData(), getCardsData()])
   .then(([userData, cardsData]) => {
+    console.log(userData);
+    console.log(cardsData);
     createProfile(userData);
     addCards(cardsData);
   })
@@ -141,7 +157,9 @@ function addNewCardByUser(evt) {
     link: inputNewCardImage.value,
   };
 
-  placesList.prepend(createNewCard(newCardData, deleteCard, handleImageClick));
+  placesList.prepend(
+    createNewCard(newCardData, userProfileData, deleteCard, handleImageClick)
+  );
   closeModal(popupNewCard);
 
   return fetch(serverUrl + "cards", {
@@ -156,7 +174,6 @@ function addNewCardByUser(evt) {
     }),
   })
     .then((res) => getRequestedData(res))
-    .then((data) => console.log(data))
     .catch((err) => console.log(err));
 }
 
