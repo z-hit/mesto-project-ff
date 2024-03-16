@@ -204,6 +204,33 @@ function deleteCard() {
     .catch((err) => console.log(err));
 }
 
+function handleLike(button, cardData) {
+  const card = button.closest(".card");
+  const likeCounter = card.querySelector(".card__like-counter");
+
+  if (
+    cardData.likes.length > 0 &&
+    cardData.likes.some((user) => user._id === userProfileData.id)
+  ) {
+    console.log("i liked it");
+  } else {
+    console.log("I didn't like it");
+    return fetch(baseUrl + "cards/likes/" + cardData._id, {
+      method: "PUT",
+      headers: {
+        authorization: token,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => handlePromiseResolve(res))
+      .then((updatedCardData) => {
+        likeCounter.textContent = updatedCardData.likes.length;
+        button.classList.add("card__like-button_is-active");
+      })
+      .catch((err) => console.log(err));
+  }
+}
+
 function clearValidation(formElement, validationConfig) {
   const inputList = Array.from(
     formElement.querySelectorAll(validationConfig.inputSelector)
@@ -221,8 +248,6 @@ function clearValidation(formElement, validationConfig) {
 }
 
 enableValidation(validationConfig);
-
-buttonConfirmDeleteCard.addEventListener("click", deleteCard);
 
 buttonOpenPopupEdit.addEventListener("click", () => {
   inputProfileEditName.value = profileTitle.textContent;
@@ -254,5 +279,6 @@ popupConfirmDeleteCard.addEventListener("click", handleOverlayClick);
 buttonClosePopupConfirmDeleteCard.addEventListener("click", () =>
   handleCrossClick(popupConfirmDeleteCard)
 );
+buttonConfirmDeleteCard.addEventListener("click", deleteCard);
 
-export { cardTemplate, handleImageClick };
+export { cardTemplate, handleImageClick, handleLike };

@@ -1,5 +1,4 @@
-import { cardTemplate } from "../index";
-//import { closeModal, openModal } from "./modal";
+import { cardTemplate, handleLike } from "../index";
 
 function createNewCard(
   cardData,
@@ -27,7 +26,16 @@ function createNewCard(
     buttonDeleteCard.addEventListener("click", confirmDeleteCardFunc);
   }
 
-  buttonLike.addEventListener("click", handleLikeClick);
+  if (
+    cardData.likes.length > 0 &&
+    cardData.likes.some((user) => user._id === userProfileData.id)
+  ) {
+    buttonLike.classList.add("card__like-button_is-active");
+  }
+
+  buttonLike.addEventListener("click", (evt) =>
+    handleLikeClick(evt.target, cardData)
+  );
   buttonImage.addEventListener("click", () =>
     handleImageClickFunc(buttonImage.src, cardTitle.textContent)
   );
@@ -35,8 +43,8 @@ function createNewCard(
   return newCard;
 }
 
-function handleLikeClick(evt) {
-  evt.target.classList.toggle("card__like-button_is-active");
+function handleLikeClick(button, cardData) {
+  handleLike(button, cardData);
 }
 
 export { createNewCard };
