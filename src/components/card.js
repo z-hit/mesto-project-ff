@@ -1,10 +1,10 @@
-import { cardTemplate, popupConfirmDeleteCard } from "../index";
-import { openModal } from "./modal";
+import { cardTemplate } from "../index";
+//import { closeModal, openModal } from "./modal";
 
-const createNewCard = function (
+function createNewCard(
   cardData,
   userProfileData,
-  deleteCardFunc,
+  confirmDeleteCardFunc,
   handleImageClickFunc
 ) {
   const newCard = cardTemplate.cloneNode(true);
@@ -24,7 +24,7 @@ const createNewCard = function (
   if (cardData.owner._id !== userProfileData.id) {
     buttonDeleteCard.style.display = "none";
   } else {
-    buttonDeleteCard.addEventListener("click", deleteCardFunc);
+    buttonDeleteCard.addEventListener("click", confirmDeleteCardFunc);
   }
 
   buttonLike.addEventListener("click", handleLikeClick);
@@ -33,23 +33,10 @@ const createNewCard = function (
   );
 
   return newCard;
-};
+}
 
 function handleLikeClick(evt) {
   evt.target.classList.toggle("card__like-button_is-active");
 }
 
-function confirmDeleteCard(cardID) {
-  
-}
-
-function deleteCard(evt) {
-  const cardToDelete = evt.target.closest(".card");
-  //cardToDelete.remove();
-  openModal(popupConfirmDeleteCard);
-
-  console.log(cardToDelete);
-  console.log(cardToDelete.id);
-}
-
-export { createNewCard, deleteCard };
+export { createNewCard };

@@ -1,5 +1,5 @@
 import "./index.css";
-import { createNewCard, deleteCard } from "./components/card";
+import { createNewCard } from "./components/card";
 import {
   openModal,
   closeModal,
@@ -41,6 +41,8 @@ const popupConfirmDeleteCard = document.querySelector(
 );
 const buttonClosePopupConfirmDeleteCard =
   popupConfirmDeleteCard.querySelector(".popup__close");
+const buttonConfirmDeleteCard =
+  popupConfirmDeleteCard.querySelector(".popup__button");
 
 const validationConfig = {
   formSelector: ".popup__form",
@@ -50,7 +52,7 @@ const validationConfig = {
   inputErrorClass: "popup__input_type_error",
   errorClass: "popup__error_visible",
 };
-const serverUrl = "https://nomoreparties.co/v1/wff-cohort-8/";
+const baseUrl = "https://nomoreparties.co/v1/wff-cohort-8/";
 const token = "3a178645-c470-4f48-a274-38f177eede82";
 const userProfileData = {
   name: "",
@@ -58,7 +60,6 @@ const userProfileData = {
   avatar: "",
   id: "",
 };
-
 let idCardToDelete = "";
 
 function handlePromiseResolve(response) {
@@ -69,7 +70,7 @@ function handlePromiseResolve(response) {
 }
 
 function getUserData() {
-  return fetch(serverUrl + "users/me", {
+  return fetch(baseUrl + "users/me", {
     method: "GET",
     headers: {
       authorization: token,
@@ -78,7 +79,7 @@ function getUserData() {
 }
 
 function getCardsData() {
-  return fetch(serverUrl + "cards", {
+  return fetch(baseUrl + "cards", {
     method: "GET",
     headers: {
       authorization: token,
@@ -100,7 +101,7 @@ function createProfile(userData) {
 function addCards(cardsList) {
   cardsList.forEach((card) => {
     placesList.append(
-      createNewCard(card, userProfileData, deleteCard, handleImageClick)
+      createNewCard(card, userProfileData, confrimDeleteCard, handleImageClick)
     );
   });
 }
@@ -133,7 +134,7 @@ function handleImageClick(cardImage, cardCaption) {
 function updateProfileInfo(evt) {
   evt.preventDefault();
 
-  return fetch(serverUrl + "users/me", {
+  return fetch(baseUrl + "users/me", {
     method: "PATCH",
     headers: {
       authorization: token,
@@ -155,7 +156,7 @@ function updateProfileInfo(evt) {
 function addNewCardByUser(evt) {
   evt.preventDefault();
 
-  return fetch(serverUrl + "cards", {
+  return fetch(baseUrl + "cards", {
     method: "POST",
     headers: {
       authorization: token,
@@ -169,9 +170,36 @@ function addNewCardByUser(evt) {
     .then((res) => handlePromiseResolve(res))
     .then((cardData) => {
       placesList.prepend(
-        createNewCard(cardData, userProfileData, deleteCard, handleImageClick)
+        createNewCard(
+          cardData,
+          userProfileData,
+          confrimDeleteCard,
+          handleImageClick
+        )
       );
       closeModal(popupNewCard);
+    })
+    .catch((err) => console.log(err));
+}
+
+function confrimDeleteCard(evt) {
+  idCardToDelete = evt.target.closest(".card").id;
+  openModal(popupConfirmDeleteCard);
+}
+
+function deleteCard() {
+  const cardToDelete = document.getElementById(idCardToDelete);
+  return fetch(baseUrl + "cards/" + idCardToDelete, {
+    method: "DELETE",
+    headers: {
+      authorization: token,
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => handlePromiseResolve(res))
+    .then(() => {
+      cardToDelete.remove();
+      closeModal(popupConfirmDeleteCard);
     })
     .catch((err) => console.log(err));
 }
@@ -193,6 +221,8 @@ function clearValidation(formElement, validationConfig) {
 }
 
 enableValidation(validationConfig);
+
+buttonConfirmDeleteCard.addEventListener("click", deleteCard);
 
 buttonOpenPopupEdit.addEventListener("click", () => {
   inputProfileEditName.value = profileTitle.textContent;
@@ -220,10 +250,9 @@ popupImage.addEventListener("click", handleOverlayClick);
 buttonClosePopupImage.addEventListener("click", () =>
   handleCrossClick(popupImage)
 );
-popupConfirmDeleteCard.addEventListener("submit", (evt) => console.log(evt));
 popupConfirmDeleteCard.addEventListener("click", handleOverlayClick);
 buttonClosePopupConfirmDeleteCard.addEventListener("click", () =>
   handleCrossClick(popupConfirmDeleteCard)
 );
 
-export { cardTemplate, popupConfirmDeleteCard, handleImageClick };
+export { cardTemplate, handleImageClick };
