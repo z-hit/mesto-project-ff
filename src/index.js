@@ -189,6 +189,7 @@ function confrimDeleteCard(evt) {
 
 function deleteCard() {
   const cardToDelete = document.getElementById(idCardToDelete);
+
   return fetch(baseUrl + "cards/" + idCardToDelete, {
     method: "DELETE",
     headers: {
@@ -204,15 +205,15 @@ function deleteCard() {
     .catch((err) => console.log(err));
 }
 
-function handleLike(button, cardData) {
-  const card = button.closest(".card");
+function handleLikeClick(event, cardData) {
+  const card = event.target.closest(".card");
+  const button = event.target;
   const likeCounter = card.querySelector(".card__like-counter");
-
+  
   if (
     cardData.likes.length > 0 &&
     cardData.likes.some((user) => user._id === userProfileData.id)
   ) {
-    console.log("i liked it");
     return fetch(baseUrl + "cards/likes/" + cardData._id, {
       method: "DELETE",
       headers: {
@@ -293,4 +294,4 @@ buttonClosePopupConfirmDeleteCard.addEventListener("click", () =>
 );
 buttonConfirmDeleteCard.addEventListener("click", deleteCard);
 
-export { cardTemplate, handleImageClick, handleLike };
+export { cardTemplate, handleImageClick, handleLikeClick };
