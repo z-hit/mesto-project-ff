@@ -213,8 +213,20 @@ function handleLike(button, cardData) {
     cardData.likes.some((user) => user._id === userProfileData.id)
   ) {
     console.log("i liked it");
+    return fetch(baseUrl + "cards/likes/" + cardData._id, {
+      method: "DELETE",
+      headers: {
+        authorization: token,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => handlePromiseResolve(res))
+      .then((updatedCardData) => {
+        likeCounter.textContent = updatedCardData.likes.length;
+        button.classList.remove("card__like-button_is-active");
+      })
+      .catch((err) => console.log(err));
   } else {
-    console.log("I didn't like it");
     return fetch(baseUrl + "cards/likes/" + cardData._id, {
       method: "PUT",
       headers: {
