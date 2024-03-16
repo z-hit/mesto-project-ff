@@ -59,7 +59,9 @@ const userProfileData = {
   id: "",
 };
 
-function getRequestedData(response) {
+let idCardToDelete = "";
+
+function handlePromiseResolve(response) {
   if (response.ok) {
     return response.json();
   }
@@ -72,7 +74,7 @@ function getUserData() {
     headers: {
       authorization: token,
     },
-  }).then((res) => getRequestedData(res));
+  }).then((res) => handlePromiseResolve(res));
 }
 
 function getCardsData() {
@@ -81,7 +83,7 @@ function getCardsData() {
     headers: {
       authorization: token,
     },
-  }).then((res) => getRequestedData(res));
+  }).then((res) => handlePromiseResolve(res));
 }
 
 function createProfile(userData) {
@@ -131,11 +133,6 @@ function handleImageClick(cardImage, cardCaption) {
 function updateProfileInfo(evt) {
   evt.preventDefault();
 
-  profileTitle.textContent = inputProfileEditName.value;
-  profileDescription.textContent = inputProfileEditDescription.value;
-
-  closeModal(popupEdit);
-
   return fetch(serverUrl + "users/me", {
     method: "PATCH",
     headers: {
@@ -147,23 +144,16 @@ function updateProfileInfo(evt) {
       about: inputProfileEditDescription.value,
     }),
   })
-    .then((res) => getRequestedData(res))
-    .then((data) => console.log(data))
+    .then((res) => handlePromiseResolve(res))
+    .then((userData) => {
+      createProfile(userData);
+      closeModal(popupEdit);
+    })
     .catch((err) => console.log(err));
 }
 
 function addNewCardByUser(evt) {
   evt.preventDefault();
-
-  const newCardData = {
-    name: inputNewCardName.value,
-    link: inputNewCardImage.value,
-  };
-
-  placesList.prepend(
-    createNewCard(newCardData, userProfileData, deleteCard, handleImageClick)
-  );
-  closeModal(popupNewCard);
 
   return fetch(serverUrl + "cards", {
     method: "POST",
@@ -176,7 +166,13 @@ function addNewCardByUser(evt) {
       link: inputNewCardImage.value,
     }),
   })
-    .then((res) => getRequestedData(res))
+    .then((res) => handlePromiseResolve(res))
+    .then((cardData) => {
+      placesList.prepend(
+        createNewCard(cardData, userProfileData, deleteCard, handleImageClick)
+      );
+      closeModal(popupNewCard);
+    })
     .catch((err) => console.log(err));
 }
 

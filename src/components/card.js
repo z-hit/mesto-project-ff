@@ -2,29 +2,26 @@ import { cardTemplate, popupConfirmDeleteCard } from "../index";
 import { openModal } from "./modal";
 
 const createNewCard = function (
-  card,
+  cardData,
   userProfileData,
   deleteCardFunc,
   handleImageClickFunc
 ) {
   const newCard = cardTemplate.cloneNode(true);
+  const newCardBody = newCard.querySelector(".card");
   const buttonDeleteCard = newCard.querySelector(".card__delete-button");
   const buttonLike = newCard.querySelector(".card__like-button");
   const buttonImage = newCard.querySelector(".card__image");
   const cardTitle = newCard.querySelector(".card__title");
   const likeCounter = newCard.querySelector(".card__like-counter");
 
-  buttonImage.src = card.link;
-  buttonImage.alt = card.name;
-  cardTitle.textContent = card.name;
+  buttonImage.src = cardData.link;
+  buttonImage.alt = cardData.name;
+  cardTitle.textContent = cardData.name;
+  likeCounter.textContent = cardData.likes.length;
+  newCardBody.setAttribute("id", cardData._id);
 
-  if (card.likes) {
-    likeCounter.textContent = card.likes.length;
-  } else {
-    likeCounter.textContent = 0;
-  }
-
-  if (card.owner && card.owner._id !== userProfileData.id) {
+  if (cardData.owner._id !== userProfileData.id) {
     buttonDeleteCard.style.display = "none";
   } else {
     buttonDeleteCard.addEventListener("click", deleteCardFunc);
@@ -32,7 +29,7 @@ const createNewCard = function (
 
   buttonLike.addEventListener("click", handleLikeClick);
   buttonImage.addEventListener("click", () =>
-    handleImageClickFunc(card.link, card.name)
+    handleImageClickFunc(buttonImage.src, cardTitle.textContent)
   );
 
   return newCard;
@@ -42,11 +39,17 @@ function handleLikeClick(evt) {
   evt.target.classList.toggle("card__like-button_is-active");
 }
 
+function confirmDeleteCard(cardID) {
+  
+}
+
 function deleteCard(evt) {
-  /* const cardToDelete = evt.target.closest(".places__item");
-  cardToDelete.remove(); */
+  const cardToDelete = evt.target.closest(".card");
+  //cardToDelete.remove();
   openModal(popupConfirmDeleteCard);
-  console.log(evt);
+
+  console.log(cardToDelete);
+  console.log(cardToDelete.id);
 }
 
 export { createNewCard, deleteCard };
