@@ -7,6 +7,16 @@ import {
 } from "./components/modal.js";
 import { enableValidation, hideInputError } from "./components/validation.js";
 import { _ } from "core-js";
+import {
+  getUserData,
+  getInitialCards,
+  patchProfileInfo,
+  patchAvatar,
+  deleteCardFromServer,
+  putLikeToServer,
+  removeLikeFromServer,
+  addNewCardToServer,
+} from "./components//api.js";
 
 const cardTemplate = document.querySelector("#card-template").content;
 
@@ -61,12 +71,6 @@ const validationConfig = {
   errorClass: "popup__error_visible",
 };
 
-/* const apiConfig = {
-  baseURL:
-
-} */
-const baseUrl = "https://nomoreparties.co/v1/wff-cohort-8/";
-const token = "3a178645-c470-4f48-a274-38f177eede82";
 const userProfileData = {
   name: "",
   about: "",
@@ -75,31 +79,6 @@ const userProfileData = {
 };
 
 let idCardToDelete = "";
-
-function handlePromiseResolve(response) {
-  if (response.ok) {
-    return response.json();
-  }
-  return response.status;
-}
-
-function getUserData() {
-  return fetch(baseUrl + "users/me", {
-    method: "GET",
-    headers: {
-      authorization: token,
-    },
-  }).then((res) => handlePromiseResolve(res));
-}
-
-function getCardsData() {
-  return fetch(baseUrl + "cards", {
-    method: "GET",
-    headers: {
-      authorization: token,
-    },
-  }).then((res) => handlePromiseResolve(res));
-}
 
 function createProfile(userData) {
   userProfileData.name = userData.name;
@@ -120,7 +99,7 @@ function addCards(cardsList) {
   });
 }
 
-Promise.all([getUserData(), getCardsData()])
+Promise.all([getUserData(), getInitialCards()])
   .then(([userData, cardsData]) => {
     createProfile(userData);
     addCards(cardsData);
@@ -149,20 +128,12 @@ function updateProfileInfo(evt) {
   evt.preventDefault();
   showSavingInProcess(buttonProfileEditSubmit, true);
 
-  return fetch(baseUrl + "users/me", {
-    method: "PATCH",
-    headers: {
-      authorization: token,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      name: inputProfileEditName.value,
-      about: inputProfileEditDescription.value,
-    }),
+  patchProfileInfo({
+    name: inputProfileEditName.value,
+    about: inputProfileEditDescription.value,
   })
-    .then((res) => handlePromiseResolve(res))
-    .then((userData) => {
-      createProfile(userData);
+    .then((updatedUserData) => {
+      createProfile(updatedUserData);
       closeModal(popupEdit);
       showSavingInProcess(buttonProfileEditSubmit, false);
     })
@@ -173,17 +144,9 @@ function updateAvatar(evt) {
   evt.preventDefault();
   showSavingInProcess(buttonPopupNewAvatar, true);
 
-  return fetch(baseUrl + "users/me/avatar", {
-    method: "PATCH",
-    headers: {
-      authorization: token,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      avatar: inputNewAvatarUrl.value,
-    }),
+  patchAvatar({
+    avatar: inputNewAvatarUrl.value,
   })
-    .then((res) => handlePromiseResolve(res))
     .then((updatedUserData) => {
       profileAvatar.style.backgroundImage =
         "url('" + updatedUserData.avatar + "')";
@@ -200,18 +163,10 @@ function addNewCardByUser(evt) {
   evt.preventDefault();
   showSavingInProcess(buttonNewCardSubmit, true);
 
-  return fetch(baseUrl + "cards", {
-    method: "POST",
-    headers: {
-      authorization: token,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      name: inputNewCardName.value,
-      link: inputNewCardImage.value,
-    }),
+  addNewCardToServer({
+    name: inputNewCardName.value,
+    link: inputNewCardImage.value,
   })
-    .then((res) => handlePromiseResolve(res))
     .then((cardData) => {
       placesList.prepend(
         createNewCard(
@@ -236,14 +191,7 @@ function deleteCard() {
   const cardToDelete = document.getElementById(idCardToDelete);
   showDeleteInProcess(buttonConfirmDeleteCard, true);
 
-  return fetch(baseUrl + "cards/" + idCardToDelete, {
-    method: "DELETE",
-    headers: {
-      authorization: token,
-      "Content-Type": "application/json",
-    },
-  })
-    .then((res) => handlePromiseResolve(res))
+  deleteCardFromServer(cardToDelete)
     .then(() => {
       cardToDelete.remove();
       closeModal(popupConfirmDeleteCard);
@@ -256,14 +204,7 @@ function putLike(cardID) {
   const card = document.getElementById(cardID);
   const likeCounter = card.querySelector(".card__like-counter");
 
-  return fetch(baseUrl + "cards/likes/" + cardID, {
-    method: "PUT",
-    headers: {
-      authorization: token,
-      "Content-Type": "application/json",
-    },
-  })
-    .then((res) => handlePromiseResolve(res))
+  putLikeToServer(cardID)
     .then((updatedCardData) => {
       likeCounter.textContent = updatedCardData.likes.length;
     })
@@ -274,14 +215,7 @@ function removeLike(cardID) {
   const card = document.getElementById(cardID);
   const likeCounter = card.querySelector(".card__like-counter");
 
-  return fetch(baseUrl + "cards/likes/" + cardID, {
-    method: "DELETE",
-    headers: {
-      authorization: token,
-      "Content-Type": "application/json",
-    },
-  })
-    .then((res) => handlePromiseResolve(res))
+  removeLikeFromServer(cardID)
     .then((updatedCardData) => {
       likeCounter.textContent = updatedCardData.likes.length;
     })
