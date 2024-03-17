@@ -205,43 +205,40 @@ function deleteCard() {
     .catch((err) => console.log(err));
 }
 
-function handleLikeClick(event, cardData) {
-  const card = event.target.closest(".card");
-  const button = event.target;
+function putLike(cardID) {
+  const card = document.getElementById(cardID);
   const likeCounter = card.querySelector(".card__like-counter");
-  
-  if (
-    cardData.likes.length > 0 &&
-    cardData.likes.some((user) => user._id === userProfileData.id)
-  ) {
-    return fetch(baseUrl + "cards/likes/" + cardData._id, {
-      method: "DELETE",
-      headers: {
-        authorization: token,
-        "Content-Type": "application/json",
-      },
+
+  return fetch(baseUrl + "cards/likes/" + cardID, {
+    method: "PUT",
+    headers: {
+      authorization: token,
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => handlePromiseResolve(res))
+    .then((updatedCardData) => {
+      likeCounter.textContent = updatedCardData.likes.length;
     })
-      .then((res) => handlePromiseResolve(res))
-      .then((updatedCardData) => {
-        likeCounter.textContent = updatedCardData.likes.length;
-        button.classList.remove("card__like-button_is-active");
-      })
-      .catch((err) => console.log(err));
-  } else {
-    return fetch(baseUrl + "cards/likes/" + cardData._id, {
-      method: "PUT",
-      headers: {
-        authorization: token,
-        "Content-Type": "application/json",
-      },
+    .catch((err) => console.log(err));
+}
+
+function removeLike(cardID) {
+  const card = document.getElementById(cardID);
+  const likeCounter = card.querySelector(".card__like-counter");
+
+  return fetch(baseUrl + "cards/likes/" + cardID, {
+    method: "DELETE",
+    headers: {
+      authorization: token,
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => handlePromiseResolve(res))
+    .then((updatedCardData) => {
+      likeCounter.textContent = updatedCardData.likes.length;
     })
-      .then((res) => handlePromiseResolve(res))
-      .then((updatedCardData) => {
-        likeCounter.textContent = updatedCardData.likes.length;
-        button.classList.add("card__like-button_is-active");
-      })
-      .catch((err) => console.log(err));
-  }
+    .catch((err) => console.log(err));
 }
 
 function clearValidation(formElement, validationConfig) {
@@ -294,4 +291,4 @@ buttonClosePopupConfirmDeleteCard.addEventListener("click", () =>
 );
 buttonConfirmDeleteCard.addEventListener("click", deleteCard);
 
-export { cardTemplate, handleImageClick, handleLikeClick };
+export { cardTemplate, handleImageClick, putLike, removeLike };

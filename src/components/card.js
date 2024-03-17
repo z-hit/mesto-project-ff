@@ -1,4 +1,4 @@
-import { cardTemplate, handleLikeClick } from "../index";
+import { cardTemplate, putLike, removeLike } from "../index";
 
 function createNewCard(
   cardData,
@@ -39,8 +39,17 @@ function createNewCard(
   buttonImage.addEventListener("click", () =>
     handleImageClickFunc(buttonImage.src, cardTitle.textContent)
   );
-
   return newCard;
+}
+
+function handleLikeClick(event, cardData) {
+  event.target.classList.toggle("card__like-button_is-active");
+
+  if (event.target.classList.contains("card__like-button_is-active")) {
+    putLike(cardData._id);
+  } else {
+    removeLike(cardData._id);
+  }
 }
 
 export { createNewCard };
