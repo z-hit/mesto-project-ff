@@ -24,6 +24,7 @@ const inputProfileEditDescription = formEditProfile.querySelector(
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
 const profileAvatar = document.querySelector(".profile__image");
+const buttonProfileEditSubmit = popupEdit.querySelector(".button");
 const buttonOpenPopupNewCard = document.querySelector(".profile__add-button");
 const popupNewCard = document.querySelector(".popup_type_new-card");
 const buttonClosePopupNewCard = popupNewCard.querySelector(".popup__close");
@@ -32,6 +33,7 @@ const inputNewCardImage = formNewCard.querySelector(".popup__input_type_url");
 const inputNewCardName = formNewCard.querySelector(
   ".popup__input_type_card-name"
 );
+const buttonNewCardSubmit = popupNewCard.querySelector(".button");
 const popupImage = document.querySelector(".popup_type_image");
 const buttonClosePopupImage = popupImage.querySelector(".popup__close");
 const popupImageImage = popupImage.querySelector(".popup__image");
@@ -48,6 +50,7 @@ const buttonClosePopupNewAvatar = popupNewAvatar.querySelector(".popup__close");
 const inputNewAvatarUrl = popupNewAvatar.querySelector(
   ".popup__input_type_url"
 );
+const buttonPopupNewAvatar = popupNewAvatar.querySelector(".button");
 
 const validationConfig = {
   formSelector: ".popup__form",
@@ -138,6 +141,7 @@ function handleImageClick(cardImage, cardCaption) {
 
 function updateProfileInfo(evt) {
   evt.preventDefault();
+  showSavingInProcess(buttonProfileEditSubmit, true);
 
   return fetch(baseUrl + "users/me", {
     method: "PATCH",
@@ -154,12 +158,14 @@ function updateProfileInfo(evt) {
     .then((userData) => {
       createProfile(userData);
       closeModal(popupEdit);
+      showSavingInProcess(buttonProfileEditSubmit, false);
     })
     .catch((err) => console.log(err));
 }
 
 function updateAvatar(evt) {
   evt.preventDefault();
+  showSavingInProcess(buttonPopupNewAvatar, true);
 
   return fetch(baseUrl + "users/me/avatar", {
     method: "PATCH",
@@ -176,6 +182,7 @@ function updateAvatar(evt) {
       profileAvatar.style.backgroundImage =
         "url('" + updatedUserData.avatar + "')";
       closeModal(popupNewAvatar);
+      showSavingInProcess(buttonPopupNewAvatar, false);
     })
     .catch((err) => console.log(err));
 
@@ -185,6 +192,7 @@ function updateAvatar(evt) {
 
 function addNewCardByUser(evt) {
   evt.preventDefault();
+  showSavingInProcess(buttonNewCardSubmit, true);
 
   return fetch(baseUrl + "cards", {
     method: "POST",
@@ -208,6 +216,7 @@ function addNewCardByUser(evt) {
         )
       );
       closeModal(popupNewCard);
+      showSavingInProcess(buttonNewCardSubmit, false);
     })
     .catch((err) => console.log(err));
 }
@@ -219,6 +228,7 @@ function confrimDeleteCard(evt) {
 
 function deleteCard() {
   const cardToDelete = document.getElementById(idCardToDelete);
+  showDeleteInProcess(buttonConfirmDeleteCard, true);
 
   return fetch(baseUrl + "cards/" + idCardToDelete, {
     method: "DELETE",
@@ -231,6 +241,7 @@ function deleteCard() {
     .then(() => {
       cardToDelete.remove();
       closeModal(popupConfirmDeleteCard);
+      showDeleteInProcess(buttonConfirmDeleteCard, false);
     })
     .catch((err) => console.log(err));
 }
@@ -269,6 +280,22 @@ function removeLike(cardID) {
       likeCounter.textContent = updatedCardData.likes.length;
     })
     .catch((err) => console.log(err));
+}
+
+function showSavingInProcess(button, isSaving) {
+  if (isSaving) {
+    button.textContent = "Сохранение...";
+  } else {
+    button.textContent = "Сохранить";
+  }
+}
+
+function showDeleteInProcess(button, isDeleting) {
+  if (isDeleting) {
+    button.textContent = "Удаление...";
+  } else {
+    button.textContent = "Да";
+  }
 }
 
 function clearValidation(formElement, validationConfig) {
