@@ -60,6 +60,11 @@ const validationConfig = {
   inputErrorClass: "popup__input_type_error",
   errorClass: "popup__error_visible",
 };
+
+/* const apiConfig = {
+  baseURL:
+
+} */
 const baseUrl = "https://nomoreparties.co/v1/wff-cohort-8/";
 const token = "3a178645-c470-4f48-a274-38f177eede82";
 const userProfileData = {
@@ -68,6 +73,7 @@ const userProfileData = {
   avatar: "",
   id: "",
 };
+
 let idCardToDelete = "";
 
 function handlePromiseResolve(response) {
