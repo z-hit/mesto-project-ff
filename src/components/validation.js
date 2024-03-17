@@ -78,4 +78,20 @@ const checkInputValid = (formElement, inputElement, validationConfig) => {
   }
 };
 
-export { enableValidation, hideInputError };
+function clearValidation(formElement, validationConfig) {
+  const inputList = Array.from(
+    formElement.querySelectorAll(validationConfig.inputSelector)
+  );
+  const buttonElement = formElement.querySelector(
+    validationConfig.submitButtonSelector
+  );
+
+  buttonElement.disabled = true;
+  buttonElement.classList.add(validationConfig.inactiveButtonClass);
+
+  inputList.forEach((input) => {
+    hideInputError(formElement, input, validationConfig);
+  });
+}
+
+export { enableValidation, clearValidation };

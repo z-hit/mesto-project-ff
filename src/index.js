@@ -5,7 +5,7 @@ import {
   closeModal,
   handleOverlayClick,
 } from "./components/modal.js";
-import { enableValidation, hideInputError } from "./components/validation.js";
+import { enableValidation, clearValidation } from "./components/validation.js";
 import { _ } from "core-js";
 import {
   getUserData,
@@ -154,9 +154,6 @@ function updateAvatar(evt) {
       showSavingInProcess(buttonPopupNewAvatar, false);
     })
     .catch((err) => console.log(err));
-
-  {
-  }
 }
 
 function addNewCardByUser(evt) {
@@ -236,22 +233,6 @@ function showDeleteInProcess(button, isDeleting) {
   } else {
     button.textContent = "Да";
   }
-}
-
-function clearValidation(formElement, validationConfig) {
-  const inputList = Array.from(
-    formElement.querySelectorAll(validationConfig.inputSelector)
-  );
-  const buttonElement = formElement.querySelector(
-    validationConfig.submitButtonSelector
-  );
-
-  buttonElement.disabled = true;
-  buttonElement.classList.add(validationConfig.inactiveButtonClass);
-
-  inputList.forEach((input) => {
-    hideInputError(formElement, input, validationConfig);
-  });
 }
 
 enableValidation(validationConfig);
