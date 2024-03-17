@@ -43,6 +43,11 @@ const buttonClosePopupConfirmDeleteCard =
   popupConfirmDeleteCard.querySelector(".popup__close");
 const buttonConfirmDeleteCard =
   popupConfirmDeleteCard.querySelector(".popup__button");
+const popupNewAvatar = document.querySelector(".popup_type_new-avatar");
+const buttonClosePopupNewAvatar = popupNewAvatar.querySelector(".popup__close");
+const inputNewAvatarUrl = popupNewAvatar.querySelector(
+  ".popup__input_type_url"
+);
 
 const validationConfig = {
   formSelector: ".popup__form",
@@ -151,6 +156,31 @@ function updateProfileInfo(evt) {
       closeModal(popupEdit);
     })
     .catch((err) => console.log(err));
+}
+
+function updateAvatar(evt) {
+  evt.preventDefault();
+
+  return fetch(baseUrl + "users/me/avatar", {
+    method: "PATCH",
+    headers: {
+      authorization: token,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      avatar: inputNewAvatarUrl.value,
+    }),
+  })
+    .then((res) => handlePromiseResolve(res))
+    .then((updatedUserData) => {
+      profileAvatar.style.backgroundImage =
+        "url('" + updatedUserData.avatar + "')";
+      closeModal(popupNewAvatar);
+    })
+    .catch((err) => console.log(err));
+
+  {
+  }
 }
 
 function addNewCardByUser(evt) {
@@ -290,5 +320,15 @@ buttonClosePopupConfirmDeleteCard.addEventListener("click", () =>
   handleCrossClick(popupConfirmDeleteCard)
 );
 buttonConfirmDeleteCard.addEventListener("click", deleteCard);
+popupNewAvatar.addEventListener("click", handleOverlayClick);
+buttonClosePopupNewAvatar.addEventListener("click", () =>
+  handleCrossClick(popupNewAvatar)
+);
+popupNewAvatar.addEventListener("submit", (evt) => updateAvatar(evt));
+profileAvatar.addEventListener("click", () => {
+  clearInputs(popupNewAvatar);
+  clearValidation(popupNewAvatar, validationConfig);
+  openModal(popupNewAvatar);
+});
 
 export { cardTemplate, handleImageClick, putLike, removeLike };
