@@ -94,7 +94,13 @@ function createProfile(userData) {
 function addCards(cardsList) {
   cardsList.forEach((card) => {
     placesList.append(
-      createNewCard(card, userProfileData, confrimDeleteCard, handleImageClick)
+      createNewCard(
+        card,
+        userProfileData,
+        confrimDeleteCard,
+        handleLikeClick,
+        handleImageClick
+      )
     );
   });
 }
@@ -170,6 +176,7 @@ function addNewCardByUser(evt) {
           cardData,
           userProfileData,
           confrimDeleteCard,
+          handleLikeClick,
           handleImageClick
         )
       );
@@ -179,8 +186,8 @@ function addNewCardByUser(evt) {
     .catch((err) => console.log(err));
 }
 
-function confrimDeleteCard(evt) {
-  idCardToDelete = evt.target.closest(".card").id;
+function confrimDeleteCard(cardToDelete) {
+  idCardToDelete = cardToDelete.id;
   openModal(popupConfirmDeleteCard);
 }
 
@@ -197,24 +204,47 @@ function deleteCard() {
     .catch((err) => console.log(err));
 }
 
-function putLike(cardID) {
-  const card = document.getElementById(cardID);
-  const likeCounter = card.querySelector(".card__like-counter");
+function handleLikeClick(cardToLike) {
+  return getInitialCards()
+    .then((cardsList) => {
+      const cardToPutLike = cardsList.find(
+        (card) => card._id === cardToLike.id
+      );
+      if (
+        cardToPutLike.likes.length > 0 &&
+        cardToPutLike.likes.some((user) => user._id === userProfileData.id)
+      ) {
+        console.log("remove like works");
+        removeLike(cardToLike);
+      } else {
+        console.log("put like works");
 
-  putLikeToServer(cardID)
-    .then((updatedCardData) => {
-      likeCounter.textContent = updatedCardData.likes.length;
+        putLike(cardToLike);
+      }
     })
     .catch((err) => console.log(err));
 }
 
-function removeLike(cardID) {
-  const card = document.getElementById(cardID);
+function putLike(card) {
   const likeCounter = card.querySelector(".card__like-counter");
+  const buttonLike = card.querySelector(".card__like-button");
 
-  removeLikeFromServer(cardID)
+  putLikeToServer(card)
     .then((updatedCardData) => {
       likeCounter.textContent = updatedCardData.likes.length;
+      buttonLike.classList.add("card__like-button_is-active");
+    })
+    .catch((err) => console.log(err));
+}
+
+function removeLike(card) {
+  const likeCounter = card.querySelector(".card__like-counter");
+  const buttonLike = card.querySelector(".card__like-button");
+
+  removeLikeFromServer(card)
+    .then((updatedCardData) => {
+      likeCounter.textContent = updatedCardData.likes.length;
+      buttonLike.classList.remove("card__like-button_is-active");
     })
     .catch((err) => console.log(err));
 }
@@ -279,4 +309,4 @@ profileAvatar.addEventListener("click", () => {
   openModal(popupNewAvatar);
 });
 
-export { cardTemplate, handleImageClick, putLike, removeLike };
+export { cardTemplate, handleImageClick, putLike, removeLike, handleLikeClick };

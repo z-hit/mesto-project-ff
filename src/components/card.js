@@ -1,9 +1,10 @@
-import { cardTemplate, putLike, removeLike } from "../index";
+import { cardTemplate } from "../index";
 
 function createNewCard(
   cardData,
   userProfileData,
   confirmDeleteCardFunc,
+  handleLikeClickFunc,
   handleImageClickFunc
 ) {
   const newCard = cardTemplate.cloneNode(true);
@@ -23,7 +24,9 @@ function createNewCard(
   if (cardData.owner._id !== userProfileData.id) {
     buttonDeleteCard.style.display = "none";
   } else {
-    buttonDeleteCard.addEventListener("click", confirmDeleteCardFunc);
+    buttonDeleteCard.addEventListener("click", () =>
+      confirmDeleteCardFunc(newCardBody)
+    );
   }
 
   if (
@@ -33,23 +36,11 @@ function createNewCard(
     buttonLike.classList.add("card__like-button_is-active");
   }
 
-  buttonLike.addEventListener("click", (event) =>
-    handleLikeClick(event, cardData)
-  );
+  buttonLike.addEventListener("click", () => handleLikeClickFunc(newCardBody));
   buttonImage.addEventListener("click", () =>
     handleImageClickFunc(buttonImage.src, cardTitle.textContent)
   );
   return newCard;
-}
-
-function handleLikeClick(event, cardData) {
-  event.target.classList.toggle("card__like-button_is-active");
-
-  if (event.target.classList.contains("card__like-button_is-active")) {
-    putLike(cardData._id);
-  } else {
-    removeLike(cardData._id);
-  }
 }
 
 export { createNewCard };

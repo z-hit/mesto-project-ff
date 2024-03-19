@@ -55,12 +55,12 @@ function deleteCardFromServer(cardToDelete) {
   return fetchServer(`${apiConfig.baseURL}cards/${cardToDelete.id}`, "DELETE");
 }
 
-function putLikeToServer(cardID) {
-  return fetchServer(`${apiConfig.baseURL}cards/likes/${cardID}`, "PUT");
+function putLikeToServer(card) {
+  return fetchServer(`${apiConfig.baseURL}cards/likes/${card.id}`, "PUT");
 }
 
-function removeLikeFromServer(cardID) {
-  return fetchServer(`${apiConfig.baseURL}cards/likes/${cardID}`, "DELETE");
+function removeLikeFromServer(card) {
+  return fetchServer(`${apiConfig.baseURL}cards/likes/${card.id}`, "DELETE");
 }
 
 export {
