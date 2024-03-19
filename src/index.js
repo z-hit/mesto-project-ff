@@ -6,7 +6,6 @@ import {
   handleOverlayClick,
 } from "./components/modal.js";
 import { enableValidation, clearValidation } from "./components/validation.js";
-import { _ } from "core-js";
 import {
   getUserData,
   getInitialCards,
@@ -78,7 +77,7 @@ const userProfileData = {
   id: "",
 };
 
-let idCardToDelete = "";
+let cardToDelete = "";
 
 function createProfile(userData) {
   userProfileData.name = userData.name;
@@ -186,13 +185,12 @@ function addNewCardByUser(evt) {
     .catch((err) => console.log(err));
 }
 
-function confrimDeleteCard(cardToDelete) {
-  idCardToDelete = cardToDelete.id;
+function confrimDeleteCard(card) {
+  cardToDelete = card;
   openModal(popupConfirmDeleteCard);
 }
 
 function deleteCard() {
-  const cardToDelete = document.getElementById(idCardToDelete);
   showDeleteInProcess(buttonConfirmDeleteCard, true);
 
   deleteCardFromServer(cardToDelete)
