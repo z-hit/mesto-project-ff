@@ -1,5 +1,5 @@
 import "./index.css";
-import { createNewCard } from "./components/card";
+import { createNewCard, isLiked, updateLikesInCard } from "./components/card";
 import {
   openModal,
   closeModal,
@@ -192,24 +192,6 @@ function deleteCard() {
       setElementTextContent(buttonConfirmDeleteCard, "Да");
     })
     .catch((err) => console.log(err));
-}
-
-function isLiked(card) {
-  if (
-    card
-      .querySelector(".card__like-button")
-      .classList.contains("card__like-button_is-active")
-  ) {
-    return true;
-  }
-  return false;
-}
-
-function updateLikesInCard(card, cardData) {
-  const likeCounter = card.querySelector(".card__like-counter");
-  const buttonLike = card.querySelector(".card__like-button");
-  likeCounter.textContent = cardData.likes.length;
-  buttonLike.classList.toggle("card__like-button_is-active");
 }
 
 function handleLikeClick(card) {

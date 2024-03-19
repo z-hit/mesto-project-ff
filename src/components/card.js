@@ -39,4 +39,22 @@ function createNewCard(cardData, userID, cardHandlersConfig) {
   return newCard;
 }
 
-export { createNewCard };
+function isLiked(card) {
+  if (
+    card
+      .querySelector(".card__like-button")
+      .classList.contains("card__like-button_is-active")
+  ) {
+    return true;
+  }
+  return false;
+}
+
+function updateLikesInCard(card, cardData) {
+  const likeCounter = card.querySelector(".card__like-counter");
+  const buttonLike = card.querySelector(".card__like-button");
+  likeCounter.textContent = cardData.likes.length;
+  buttonLike.classList.toggle("card__like-button_is-active");
+}
+
+export { createNewCard, isLiked, updateLikesInCard };
