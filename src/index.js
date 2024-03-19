@@ -70,6 +70,12 @@ const validationConfig = {
   errorClass: "popup__error_visible",
 };
 
+const cardHandlers = {
+  handleDeleteCard: confrimDeleteCard,
+  handleLike: handleLikeClick,
+  handleImageOpen: handleImageClick,
+};
+
 const userProfileData = {
   name: "",
   about: "",
@@ -92,15 +98,7 @@ function createProfile(userData) {
 
 function addCards(cardsList) {
   cardsList.forEach((card) => {
-    placesList.append(
-      createNewCard(
-        card,
-        userProfileData,
-        confrimDeleteCard,
-        handleLikeClick,
-        handleImageClick
-      )
-    );
+    placesList.append(createNewCard(card, userProfileData.id, cardHandlers));
   });
 }
 
@@ -171,13 +169,7 @@ function addNewCardByUser(evt) {
   })
     .then((cardData) => {
       placesList.prepend(
-        createNewCard(
-          cardData,
-          userProfileData,
-          confrimDeleteCard,
-          handleLikeClick,
-          handleImageClick
-        )
+        createNewCard(cardData, userProfileData.id, cardHandlers)
       );
       closeModal(popupNewCard);
       setElementTextContent(buttonNewCardSubmit, "Сохранить");
