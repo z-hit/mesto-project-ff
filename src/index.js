@@ -131,7 +131,7 @@ function handleImageClick(cardImage, cardCaption) {
 
 function updateProfileInfo(evt) {
   evt.preventDefault();
-  showSavingInProcess(buttonProfileEditSubmit, true);
+  setElementTextContent(buttonProfileEditSubmit, "Сохранение...");
 
   patchProfileInfo({
     name: inputProfileEditName.value,
@@ -140,14 +140,14 @@ function updateProfileInfo(evt) {
     .then((updatedUserData) => {
       createProfile(updatedUserData);
       closeModal(popupEdit);
-      showSavingInProcess(buttonProfileEditSubmit, false);
+      setElementTextContent(buttonProfileEditSubmit, "Сохранить");
     })
     .catch((err) => console.log(err));
 }
 
 function updateAvatar(evt) {
   evt.preventDefault();
-  showSavingInProcess(buttonPopupNewAvatar, true);
+  setElementTextContent(buttonPopupNewAvatar, "Сохранение...");
 
   patchAvatar({
     avatar: inputNewAvatarUrl.value,
@@ -156,14 +156,14 @@ function updateAvatar(evt) {
       profileAvatar.style.backgroundImage =
         "url('" + updatedUserData.avatar + "')";
       closeModal(popupNewAvatar);
-      showSavingInProcess(buttonPopupNewAvatar, false);
+      setElementTextContent(buttonPopupNewAvatar, "Сохранить");
     })
     .catch((err) => console.log(err));
 }
 
 function addNewCardByUser(evt) {
   evt.preventDefault();
-  showSavingInProcess(buttonNewCardSubmit, true);
+  setElementTextContent(buttonNewCardSubmit, "Сохранение...");
 
   addNewCardToServer({
     name: inputNewCardName.value,
@@ -180,7 +180,7 @@ function addNewCardByUser(evt) {
         )
       );
       closeModal(popupNewCard);
-      showSavingInProcess(buttonNewCardSubmit, false);
+      setElementTextContent(buttonNewCardSubmit, "Сохранить");
     })
     .catch((err) => console.log(err));
 }
@@ -191,13 +191,13 @@ function confrimDeleteCard(card) {
 }
 
 function deleteCard() {
-  showDeleteInProcess(buttonConfirmDeleteCard, true);
+  setElementTextContent(buttonConfirmDeleteCard, "Удаление...");
 
   deleteCardFromServer(cardToDelete)
     .then(() => {
       cardToDelete.remove();
       closeModal(popupConfirmDeleteCard);
-      showDeleteInProcess(buttonConfirmDeleteCard, false);
+      setElementTextContent(buttonConfirmDeleteCard, "Да");
     })
     .catch((err) => console.log(err));
 }
@@ -244,20 +244,8 @@ function removeLike(card) {
     .catch((err) => console.log(err));
 }
 
-function showSavingInProcess(button, isSaving) {
-  if (isSaving) {
-    button.textContent = "Сохранение...";
-  } else {
-    button.textContent = "Сохранить";
-  }
-}
-
-function showDeleteInProcess(button, isDeleting) {
-  if (isDeleting) {
-    button.textContent = "Удаление...";
-  } else {
-    button.textContent = "Да";
-  }
+function setElementTextContent(element, text) {
+  element.textContent = text;
 }
 
 enableValidation(validationConfig);
