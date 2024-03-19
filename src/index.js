@@ -204,47 +204,44 @@ function deleteCard() {
     .catch((err) => console.log(err));
 }
 
-function handleLikeClick(cardToLike) {
-  return getInitialCards()
-    .then((cardsList) => {
-      const cardToPutLike = cardsList.find(
-        (card) => card._id === cardToLike.id
-      );
-      if (
-        cardToPutLike.likes.length > 0 &&
-        cardToPutLike.likes.some((user) => user._id === userProfileData.id)
-      ) {
-        console.log("remove like works");
-        removeLike(cardToLike);
-      } else {
-        console.log("put like works");
+function isLiked(card) {
+  if (
+    card
+      .querySelector(".card__like-button")
+      .classList.contains("card__like-button_is-active")
+  ) {
+    return true;
+  }
+  return false;
+}
 
-        putLike(cardToLike);
-      }
-    })
-    .catch((err) => console.log(err));
+function updateLikesInCard(card, cardData) {
+  const likeCounter = card.querySelector(".card__like-counter");
+  const buttonLike = card.querySelector(".card__like-button");
+  likeCounter.textContent = cardData.likes.length;
+  buttonLike.classList.toggle("card__like-button_is-active");
+}
+
+function handleLikeClick(card) {
+  if (isLiked(card)) {
+    removeLike(card);
+  } else {
+    putLike(card);
+  }
 }
 
 function putLike(card) {
-  const likeCounter = card.querySelector(".card__like-counter");
-  const buttonLike = card.querySelector(".card__like-button");
-
   putLikeToServer(card)
     .then((updatedCardData) => {
-      likeCounter.textContent = updatedCardData.likes.length;
-      buttonLike.classList.add("card__like-button_is-active");
+      updateLikesInCard(card, updatedCardData);
     })
     .catch((err) => console.log(err));
 }
 
 function removeLike(card) {
-  const likeCounter = card.querySelector(".card__like-counter");
-  const buttonLike = card.querySelector(".card__like-button");
-
   removeLikeFromServer(card)
     .then((updatedCardData) => {
-      likeCounter.textContent = updatedCardData.likes.length;
-      buttonLike.classList.remove("card__like-button_is-active");
+      updateLikesInCard(card, updatedCardData);
     })
     .catch((err) => console.log(err));
 }
