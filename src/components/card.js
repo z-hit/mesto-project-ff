@@ -40,14 +40,9 @@ function createNewCard(cardData, userID, cardHandlersConfig) {
 }
 
 function isLiked(card) {
-  if (
-    card
-      .querySelector(".card__like-button")
-      .classList.contains("card__like-button_is-active")
-  ) {
-    return true;
-  }
-  return false;
+  return card
+    .querySelector(".card__like-button")
+    .classList.contains("card__like-button_is-active");
 }
 
 function updateLikesInCard(card, cardData) {

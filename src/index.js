@@ -138,9 +138,9 @@ function updateProfileInfo(evt) {
     .then((updatedUserData) => {
       createProfile(updatedUserData);
       closeModal(popupEdit);
-      setElementTextContent(buttonProfileEditSubmit, "Сохранить");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => console.log(err))
+    .finally(() => setElementTextContent(buttonProfileEditSubmit, "Сохранить"));
 }
 
 function updateAvatar(evt) {
@@ -154,9 +154,9 @@ function updateAvatar(evt) {
       profileAvatar.style.backgroundImage =
         "url('" + updatedUserData.avatar + "')";
       closeModal(popupNewAvatar);
-      setElementTextContent(buttonPopupNewAvatar, "Сохранить");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => console.log(err))
+    .finally(() => setElementTextContent(buttonPopupNewAvatar, "Сохранить"));
 }
 
 function addNewCardByUser(evt) {
@@ -172,9 +172,9 @@ function addNewCardByUser(evt) {
         createNewCard(cardData, userProfileData.id, cardHandlers)
       );
       closeModal(popupNewCard);
-      setElementTextContent(buttonNewCardSubmit, "Сохранить");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => console.log(err))
+    .finally(() => setElementTextContent(buttonNewCardSubmit, "Сохранить"));
 }
 
 function confrimDeleteCard(card) {
@@ -189,9 +189,9 @@ function deleteCard() {
     .then(() => {
       cardToDelete.remove();
       closeModal(popupConfirmDeleteCard);
-      setElementTextContent(buttonConfirmDeleteCard, "Да");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => console.log(err))
+    .finally(() => setElementTextContent(buttonConfirmDeleteCard, "Да"));
 }
 
 function handleLikeClick(card) {
